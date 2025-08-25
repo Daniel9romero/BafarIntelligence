@@ -2851,7 +2851,12 @@
                 const userData = sessionStorage.getItem('user');
                 if (userData) {
                     const user = JSON.parse(userData);
-                    currentUser = user.username || 'Usuario';
+                    currentUser = user.name || user.username || 'Usuario';
+                    console.log('👤 Usuario detectado:', {
+                        username: user.username,
+                        name: user.name,
+                        currentUser: currentUser
+                    });
                     
                     // Store for later use
                     localStorage.setItem('bafarHub_currentUser', currentUser);
