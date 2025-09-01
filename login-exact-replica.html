@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BAFAR Intelligence Hub</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Courier New', 'Consolas', monospace;
+        }
+
+        body {
+            background: #000;
+            color: #0088ff;
+            overflow: hidden;
+            height: 100vh;
+            position: relative;
+        }
+
+        /* Disable right-click */
+        body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        /* Matrix Rain Background */
+        #matrix-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0.6;
+        }
+
+        .matrix-column {
+            position: absolute;
+            top: -100vh;
+            color: #0088ff;
+            font-size: 14px;
+            line-height: 18px;
+            white-space: pre;
+            animation: matrixFall linear infinite;
+            text-shadow: 0 0 5px #0088ff;
+        }
+
+        @keyframes matrixFall {
+            0% {
+                transform: translateY(-100vh);
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh);
+                opacity: 0;
+            }
+        }
+
+        /* Login Container */
+        .login-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 10, 30, 0.95);
+            border: 2px solid #0088ff;
+            border-radius: 15px;
+            padding: 40px;
+            width: 420px;
+            max-width: 90vw;
+            z-index: 10;
+            box-shadow: 0 0 50px rgba(0, 136, 255, 0.5);
+            backdrop-filter: blur(10px);
+        }
+
+        .top-secret {
+            text-align: center;
+            color: #ff4444;
+            font-size: 12px;
+            font-weight: bold;
+            letter-spacing: 3px;
+            margin-bottom: 20px;
+            animation: blink 2s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0.3; }
+        }
+
+        .logo-container {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .bafar-logo {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: white;
+            padding: 10px;
+            animation: logoGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes logoGlow {
+            from {
+                box-shadow: 0 0 20px rgba(0, 136, 255, 0.5);
+                filter: brightness(1);
+            }
+            to {
+                box-shadow: 0 0 40px rgba(0, 136, 255, 0.8);
+                filter: brightness(1.2);
+            }
+        }
+
+        .system-title {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: #0088ff;
+            margin-bottom: 30px;
+            text-shadow: 0 0 10px #0088ff;
+            letter-spacing: 3px;
+        }
+
+        .login-form {
+            margin-bottom: 25px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            color: #0088ff;
+            font-size: 14px;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 15px;
+            background: #001122;
+            border: 1px solid #0088ff;
+            border-radius: 8px;
+            color: #0088ff;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .input-group input::placeholder {
+            color: #004488;
+        }
+
+        .input-group input:focus {
+            border-color: #00aaff;
+            box-shadow: 0 0 15px rgba(0, 170, 255, 0.3);
+            background: #001a33;
+        }
+
+        .access-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(45deg, #0088ff, #0066cc);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .access-btn:hover {
+            background: linear-gradient(45deg, #00aaff, #0088ff);
+            box-shadow: 0 5px 20px rgba(0, 136, 255, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .access-btn:active {
+            transform: translateY(0);
+        }
+
+        .warning {
+            text-align: center;
+            color: #ffaa00;
+            font-size: 11px;
+            margin-bottom: 20px;
+            animation: warningPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes warningPulse {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
+        }
+
+        .loading-spinner {
+            display: none;
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(0, 136, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #0088ff;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Access Messages */
+        .access-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 48px;
+            font-weight: bold;
+            text-align: center;
+            z-index: 1000;
+            display: none;
+            letter-spacing: 5px;
+            text-shadow: 0 0 20px currentColor;
+        }
+
+        .access-granted {
+            color: #00ff00;
+            animation: accessGrantedAnim 2s ease-in-out;
+        }
+
+        .access-denied {
+            color: #ff4444;
+            animation: accessDeniedAnim 1.5s ease-in-out;
+        }
+
+        @keyframes accessGrantedAnim {
+            0% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.5);
+            }
+            20% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1.2);
+            }
+            100% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+
+        @keyframes accessDeniedAnim {
+            0%, 100% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+            10%, 30%, 50%, 70%, 90% {
+                transform: translate(-50%, -50%) scale(1.1) rotate(-1deg);
+            }
+            20%, 40%, 60%, 80% {
+                transform: translate(-50%, -50%) scale(0.9) rotate(1deg);
+            }
+        }
+
+        /* Digital Logo Transition */
+        .digital-logo-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            z-index: 2000;
+        }
+
+        .digital-logo {
+            width: 200px;
+            height: 200px;
+            background: white;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 30px;
+            animation: logoReveal 3s ease-out forwards;
+            overflow: hidden;
+        }
+
+        .digital-logo img {
+            width: 80%;
+            height: 80%;
+            object-fit: contain;
+        }
+
+        @keyframes logoReveal {
+            0% {
+                opacity: 0;
+                transform: scale(0.3);
+                filter: brightness(0) contrast(100%);
+            }
+            25% {
+                opacity: 0.5;
+                transform: scale(0.7);
+                filter: brightness(0.5) contrast(150%) hue-rotate(180deg);
+            }
+            50% {
+                opacity: 0.8;
+                transform: scale(0.9);
+                filter: brightness(1) contrast(120%) hue-rotate(90deg);
+            }
+            75% {
+                opacity: 0.9;
+                transform: scale(1.1);
+                filter: brightness(1.3) contrast(110%) hue-rotate(45deg);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+                filter: brightness(1) contrast(100%) hue-rotate(0deg);
+                box-shadow: 0 0 50px rgba(196, 30, 58, 0.6);
+            }
+        }
+
+        .loading-text {
+            color: #0088ff;
+            font-size: 18px;
+            text-align: center;
+            margin-top: 20px;
+            animation: textPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes textPulse {
+            0%, 100% {
+                opacity: 0.6;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.05);
+            }
+        }
+
+        /* Matrix convergence effect */
+        .matrix-convergence {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1500;
+            pointer-events: none;
+        }
+
+        .convergence-line {
+            position: absolute;
+            background: linear-gradient(90deg, transparent, #0088ff, transparent);
+            height: 2px;
+            animation: converge 2s ease-in-out;
+        }
+
+        @keyframes converge {
+            0% {
+                opacity: 0;
+                width: 0;
+            }
+            50% {
+                opacity: 1;
+                width: 100%;
+            }
+            100% {
+                opacity: 0;
+                width: 0;
+            }
+        }
+
+        /* Terminal lines effect */
+        .terminal-lines {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            color: #0088ff;
+            font-size: 12px;
+            z-index: 1000;
+            opacity: 0;
+        }
+
+        .terminal-line {
+            margin-bottom: 5px;
+            opacity: 0;
+            animation: terminalType 0.5s ease forwards;
+        }
+
+        @keyframes terminalType {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .login-container {
+                width: 350px;
+                padding: 30px 25px;
+            }
+            
+            .system-title {
+                font-size: 20px;
+            }
+            
+            .access-message {
+                font-size: 32px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="matrix-bg"></div>
+    
+    <div class="login-container" id="loginContainer">
+        <div class="top-secret">TOP SECRET</div>
+        
+        <div class="logo-container">
+            <img src="bafar-logo.png" alt="BAFAR Logo" class="bafar-logo" onerror="this.style.display='none';">
+        </div>
+        
+        <div class="system-title">INTELLIGENCE HUB</div>
+        
+        <form class="login-form" id="loginForm">
+            <div class="input-group">
+                <label>Usuario</label>
+                <input type="text" id="username" placeholder="Ingrese código de usuario" required>
+            </div>
+            
+            <div class="input-group">
+                <label>Código de Seguridad</label>
+                <input type="password" id="password" placeholder="Ingrese código de seguridad" required>
+            </div>
+            
+            <button type="submit" class="access-btn">INICIAR AUTENTICACIÓN</button>
+        </form>
+        
+        <div class="warning">⚠ ADVERTENCIA: Acceso monitoreado y registrado</div>
+        
+        <div class="loading-spinner" id="loadingSpinner"></div>
+    </div>
+
+    <div id="accessGranted" class="access-message access-granted">ACCESS GRANTED</div>
+    <div id="accessDenied" class="access-message access-denied">ACCESS DENIED</div>
+
+    <div class="digital-logo-container" id="digitalLogoContainer">
+        <div class="digital-logo">
+            <img src="bafar-logo.png" alt="BAFAR Logo" onerror="this.style.display='none';">
+        </div>
+        <div class="loading-text">Inicializando Intelligence Hub...</div>
+    </div>
+
+    <div class="matrix-convergence" id="matrixConvergence"></div>
+    <div class="terminal-lines" id="terminalLines"></div>
+
+    <script>
+        // Disable right-click
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+        });
+
+        // Users Database (identical to original)
+        const USERS_DATABASE = {
+            // Administrators
+            'admin': { password: 'bafar2024', role: 'admin', name: 'Administrador' },
+            'jdlopezr': { password: 'bafar2024', role: 'admin', name: 'José Daniel López' },
+            
+            // Editors
+            'editor1': { password: 'bafar2024', role: 'editor', name: 'Editor Principal' },
+            'editor2': { password: 'bafar2024', role: 'editor', name: 'Editor Secundario' },
+            
+            // Readers
+            'reader1': { password: 'bafar2024', role: 'reader', name: 'Lector 1' },
+            'reader2': { password: 'bafar2024', role: 'reader', name: 'Lector 2' },
+            
+            // Viewers
+            'viewer1': { password: 'bafar2024', role: 'viewer', name: 'Visualizador 1' },
+            'viewer2': { password: 'bafar2024', role: 'viewer', name: 'Visualizador 2' },
+            
+            // Business Units
+            'dpc': { password: 'bafar2024', role: 'unit', name: 'DPC', unit: 'DPC' },
+            'retail': { password: 'bafar2024', role: 'unit', name: 'Retail', unit: 'Retail' },
+            'marketing': { password: 'bafar2024', role: 'unit', name: 'Marketing', unit: 'Marketing' },
+            'finanzas': { password: 'bafar2024', role: 'unit', name: 'Finanzas', unit: 'Finanzas' },
+            'rh': { password: 'bafar2024', role: 'unit', name: 'Capital Humano', unit: 'Capital Humano' },
+            'it': { password: 'bafar2024', role: 'unit', name: 'Tecnología IT', unit: 'Tecnología (IT)' },
+            'legal': { password: 'bafar2024', role: 'unit', name: 'Legal y Cumplimiento', unit: 'Legal y cumplimiento' },
+            'compras': { password: 'bafar2024', role: 'unit', name: 'Compras', unit: 'Compras' },
+            'calidad': { password: 'bafar2024', role: 'unit', name: 'Calidad', unit: 'Calidad' },
+            'ventas': { password: 'bafar2024', role: 'unit', name: 'Ventas', unit: 'Ventas' },
+            'operaciones': { password: 'bafar2024', role: 'unit', name: 'Operaciones', unit: 'Operaciones' },
+            'cadena': { password: 'bafar2024', role: 'unit', name: 'Cadena de Suministro', unit: 'Cadena de suministro' },
+            'comercioext': { password: 'bafar2024', role: 'unit', name: 'Comercio Exterior', unit: 'Comercio exterior' },
+            'proyectos': { password: 'bafar2024', role: 'unit', name: 'Proyectos Especiales', unit: 'Proyectos especiales' },
+            'id': { password: 'bafar2024', role: 'unit', name: 'I+D', unit: 'I+D' },
+            'sustentabilidad': { password: 'bafar2024', role: 'unit', name: 'Sustentabilidad', unit: 'Sustentabilidad' },
+            'seguridad': { password: 'bafar2024', role: 'unit', name: 'Seguridad', unit: 'Seguridad' },
+            'auditoria': { password: 'bafar2024', role: 'unit', name: 'Auditoría', unit: 'Auditoría' },
+            'caas': { password: 'bafar2024', role: 'unit', name: 'CAAS', unit: 'CAAS' }
+        };
+
+        let isAuthenticating = false;
+
+        // Initialize Matrix Rain
+        function createMatrixRain() {
+            const matrixBg = document.getElementById('matrix-bg');
+            const characters = '01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲンABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()_+-=[]{}|;:,.<>?';
+            const columns = Math.floor(window.innerWidth / 20);
+            
+            matrixBg.innerHTML = '';
+            
+            for (let i = 0; i < columns; i++) {
+                const column = document.createElement('div');
+                column.className = 'matrix-column';
+                column.style.left = (i * 20) + 'px';
+                column.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                column.style.animationDelay = (Math.random() * 2) + 's';
+                
+                let text = '';
+                const length = Math.floor(Math.random() * 50 + 10);
+                for (let j = 0; j < length; j++) {
+                    text += characters[Math.floor(Math.random() * characters.length)] + '\n';
+                }
+                column.textContent = text;
+                
+                matrixBg.appendChild(column);
+            }
+        }
+
+        // Handle form submission
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            if (isAuthenticating) return;
+            
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+            
+            if (!username || !password) {
+                showAccessDenied();
+                return;
+            }
+
+            await authenticate(username, password);
+        });
+
+        // Authentication function
+        async function authenticate(username, password) {
+            isAuthenticating = true;
+            
+            // Show loading
+            showLoading(true);
+            
+            // Simulate authentication delay (like original)
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            
+            // Check credentials
+            const user = USERS_DATABASE[username.toLowerCase()];
+            
+            if (user && user.password === password) {
+                // Success
+                showLoading(false);
+                showAccessGranted();
+                
+                // Store session
+                const token = btoa(`${username}:${Date.now()}`);
+                localStorage.setItem('bafar_auth_token', token);
+                localStorage.setItem('bafar_username', user.name);
+                localStorage.setItem('bafar_role', user.role);
+                
+                // Start convergence effect and transition
+                setTimeout(() => {
+                    startMatrixConvergence();
+                    showTerminalMessages();
+                    
+                    setTimeout(() => {
+                        showDigitalLogo();
+                    }, 2000);
+                    
+                    setTimeout(() => {
+                        redirectToDashboard();
+                    }, 5500);
+                }, 1000);
+                
+            } else {
+                // Failure
+                showLoading(false);
+                showAccessDenied();
+                
+                // Reset form
+                document.getElementById('password').value = '';
+                document.getElementById('username').focus();
+                
+                setTimeout(() => {
+                    document.getElementById('accessDenied').style.display = 'none';
+                }, 2000);
+            }
+            
+            isAuthenticating = false;
+        }
+
+        // Show/hide loading spinner
+        function showLoading(show) {
+            document.getElementById('loadingSpinner').style.display = show ? 'block' : 'none';
+        }
+
+        // Show access granted message
+        function showAccessGranted() {
+            document.getElementById('accessGranted').style.display = 'block';
+        }
+
+        // Show access denied message
+        function showAccessDenied() {
+            document.getElementById('accessDenied').style.display = 'block';
+        }
+
+        // Matrix convergence effect
+        function startMatrixConvergence() {
+            const convergence = document.getElementById('matrixConvergence');
+            convergence.style.display = 'block';
+            
+            for (let i = 0; i < 10; i++) {
+                setTimeout(() => {
+                    const line = document.createElement('div');
+                    line.className = 'convergence-line';
+                    line.style.top = (Math.random() * 100) + '%';
+                    convergence.appendChild(line);
+                    
+                    setTimeout(() => {
+                        line.remove();
+                    }, 2000);
+                }, i * 200);
+            }
+        }
+
+        // Show terminal messages
+        function showTerminalMessages() {
+            const terminalLines = document.getElementById('terminalLines');
+            terminalLines.style.opacity = '1';
+            
+            const messages = [
+                '[SYSTEM] Decrypting access credentials...',
+                '[AUTH] Validating security clearance...',
+                '[NETWORK] Establishing secure connection...',
+                '[DATABASE] Loading user profile...',
+                '[SYSTEM] Access authorized. Welcome to Intelligence Hub.'
+            ];
+            
+            messages.forEach((message, index) => {
+                setTimeout(() => {
+                    const line = document.createElement('div');
+                    line.className = 'terminal-line';
+                    line.textContent = message;
+                    line.style.animationDelay = '0s';
+                    terminalLines.appendChild(line);
+                }, index * 500);
+            });
+        }
+
+        // Show digital logo transition
+        function showDigitalLogo() {
+            document.getElementById('digitalLogoContainer').style.display = 'flex';
+        }
+
+        // Redirect to dashboard
+        function redirectToDashboard() {
+            window.location.href = 'intelligence-hub-with-logo.html';
+        }
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', function() {
+            createMatrixRain();
+            
+            // Focus username field
+            setTimeout(() => {
+                document.getElementById('username').focus();
+            }, 1000);
+            
+            // Recreate matrix on resize
+            window.addEventListener('resize', () => {
+                setTimeout(createMatrixRain, 100);
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,2110 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intelligence Hub - Grupo Bafar</title>
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.5/xlsx.full.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Google Sans', 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #f8f9fa;
+            color: #202124;
+            font-size: 14px;
+            line-height: 20px;
+        }
+
+        /* Header con logo de Bafar */
+        .header {
+            height: 72px;
+            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #2563eb 100%);
+            border-bottom: 3px solid #c41e3a;
+            display: flex;
+            align-items: center;
+            padding: 0 24px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .menu-btn {
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .menu-btn:hover {
+            background: rgba(255,255,255,0.2);
+            transform: scale(1.05);
+        }
+
+        .menu-icon {
+            width: 24px;
+            height: 24px;
+            color: white;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0px;
+            font-size: 24px;
+            color: white;
+            font-weight: 500;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            width: 108px;
+            overflow: hidden;
+        }
+
+        .logo:hover {
+            width: 320px;
+        }
+
+        .logo-container {
+            width: 100px;
+            height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .logo-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            transition: all 0.3s ease;
+        }
+
+        .logo:hover .logo-container img {
+            filter: brightness(1.1) drop-shadow(0 0 8px rgba(255, 255, 255, 0.3));
+        }
+
+        .logo-text-expand {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            margin-left: -10px;
+            opacity: 0;
+            transform: translateX(-20px);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) 0.1s;
+            white-space: nowrap;
+            min-width: 180px;
+        }
+
+        .logo:hover .logo-text-expand {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .logo-text-expand .logo-title {
+            font-size: 24px;
+            font-weight: 600;
+            line-height: 1.2;
+            margin-bottom: 2px;
+            color: white;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+
+        .logo-text-expand .logo-subtitle {
+            font-size: 12px;
+            opacity: 0.9;
+            font-weight: 400;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: rgba(255, 255, 255, 0.9);
+            text-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+        }
+
+
+        /* Search bar estilo Google */
+        .search-container {
+            flex: 1;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .search-box {
+            background: rgba(255,255,255,0.95);
+            border-radius: 12px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            transition: all 0.3s;
+            backdrop-filter: blur(10px);
+            border: 2px solid transparent;
+        }
+
+        .search-box:focus-within {
+            background: #ffffff;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            border-color: #c41e3a;
+        }
+
+        .search-icon {
+            color: #5f6368;
+            margin-right: 12px;
+        }
+
+        .search-input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            outline: none;
+            font-size: 16px;
+            color: #202124;
+        }
+
+        .search-input::placeholder {
+            color: #5f6368;
+        }
+
+        /* Header actions */
+        .header-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .header-btn {
+            height: 40px;
+            padding: 0 20px;
+            border-radius: 8px;
+            border: none;
+            font-family: 'Google Sans', sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            backdrop-filter: blur(10px);
+        }
+
+        .header-btn-primary {
+            background: #c41e3a;
+            color: white;
+            box-shadow: 0 2px 8px rgba(196, 30, 58, 0.3);
+        }
+
+        .header-btn-primary:hover {
+            background: #a01729;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(196, 30, 58, 0.4);
+        }
+
+        .header-btn-secondary {
+            background: rgba(255,255,255,0.15);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .header-btn-secondary:hover {
+            background: rgba(255,255,255,0.25);
+            transform: translateY(-1px);
+        }
+
+        /* Sidebar mejorado */
+        .sidebar {
+            width: 280px;
+            background: #ffffff;
+            border-right: 1px solid #e0e0e0;
+            height: calc(100vh - 72px);
+            position: fixed;
+            left: 0;
+            top: 72px;
+            padding: 16px 0;
+            overflow-y: auto;
+            transition: transform 0.3s;
+            box-shadow: 2px 0 8px rgba(0,0,0,0.05);
+        }
+
+        .sidebar.collapsed {
+            transform: translateX(-280px);
+        }
+
+        .nav-section {
+            padding: 16px 0;
+            border-bottom: 1px solid #f1f3f4;
+        }
+
+        .nav-section:last-child {
+            border-bottom: none;
+        }
+
+        .nav-section-title {
+            padding: 8px 24px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #5f6368;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .nav-item {
+            height: 48px;
+            display: flex;
+            align-items: center;
+            padding: 0 24px;
+            color: #5f6368;
+            text-decoration: none;
+            transition: all 0.2s;
+            cursor: pointer;
+            border-radius: 0 24px 24px 0;
+            margin-right: 16px;
+            font-size: 14px;
+            font-weight: 500;
+            gap: 16px;
+            position: relative;
+        }
+
+        .nav-item:hover {
+            background: #f8f9fa;
+            color: #1a73e8;
+            transform: translateX(4px);
+        }
+
+        .nav-item.active {
+            background: linear-gradient(135deg, #e8f0fe, #f0f7ff);
+            color: #1967d2;
+            font-weight: 600;
+            border-left: 4px solid #1a73e8;
+        }
+
+        .nav-item.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background: #1a73e8;
+            border-radius: 0 4px 4px 0;
+        }
+
+        .nav-icon {
+            width: 24px;
+            height: 24px;
+            opacity: 0.8;
+            transition: opacity 0.2s;
+        }
+
+        .nav-item:hover .nav-icon {
+            opacity: 1;
+        }
+
+        .nav-badge {
+            background: #ea4335;
+            color: white;
+            border-radius: 12px;
+            padding: 2px 8px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-left: auto;
+            min-width: 20px;
+            text-align: center;
+        }
+
+        /* Main content */
+        .main-content {
+            margin-left: 280px;
+            padding: 32px;
+            transition: margin-left 0.3s;
+            max-width: 1400px;
+            min-height: calc(100vh - 72px);
+        }
+
+        .main-content.expanded {
+            margin-left: 0;
+        }
+
+        .page-title {
+            font-size: 28px;
+            font-weight: 400;
+            color: #202124;
+            margin-bottom: 8px;
+        }
+
+        .page-subtitle {
+            font-size: 16px;
+            color: #5f6368;
+            margin-bottom: 32px;
+        }
+
+        /* Cards mejorados */
+        .card {
+            background: #ffffff;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            transition: all 0.3s;
+            border: 1px solid #e0e0e0;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+
+        .card-header {
+            padding: 24px 32px 16px 32px;
+            border-bottom: 1px solid #f1f3f4;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: linear-gradient(135deg, #fafbfc, #ffffff);
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 500;
+            color: #202124;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .card-content {
+            padding: 32px;
+        }
+
+        /* Dashboard grid mejorado */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 28px;
+            transition: all 0.3s;
+            border: 1px solid #e0e0e0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #1a73e8, #c41e3a);
+        }
+
+        .stat-card:hover {
+            box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+            transform: translateY(-4px);
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #1a73e8, #4285f4);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            margin-bottom: 16px;
+            font-size: 24px;
+        }
+
+        .stat-value {
+            font-size: 36px;
+            font-weight: 400;
+            color: #202124;
+            line-height: 1.2;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #5f6368;
+            margin-bottom: 12px;
+            font-weight: 500;
+        }
+
+        .stat-change {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .stat-change.positive {
+            background: #e6f4ea;
+            color: #137333;
+        }
+
+        .stat-change.negative {
+            background: #fce8e6;
+            color: #c5221f;
+        }
+
+        .stat-change.neutral {
+            background: #f1f3f4;
+            color: #5f6368;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-280px);
+            }
+            
+            .main-content {
+                margin-left: 0;
+                padding: 24px 16px;
+            }
+
+            .search-container {
+                display: none;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 16px;
+            }
+
+            .header {
+                padding: 0 16px;
+            }
+
+            .card-content, .card-header {
+                padding: 24px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .logo-text {
+                display: none;
+            }
+
+            .header-actions .header-btn span {
+                display: none;
+            }
+
+            .page-title {
+                font-size: 24px;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Loading states */
+        .loading {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid #f1f3f4;
+            border-radius: 50%;
+            border-top-color: #1a73e8;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Toast mejorado */
+        .toast {
+            position: fixed;
+            bottom: 32px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #323232;
+            color: white;
+            padding: 16px 24px;
+            border-radius: 8px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            display: none;
+            z-index: 9999;
+            font-weight: 500;
+        }
+
+        .toast.show {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(100%);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+
+        /* Content sections */
+        .content-section {
+            opacity: 1;
+            transform: translateY(0);
+            transition: all 0.3s ease;
+        }
+
+        .content-section.fade-out {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+
+        .content-section.fade-in {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Unit tabs styling */
+        .unit-tabs {
+            display: flex;
+            border-bottom: 2px solid #f1f3f4;
+            overflow-x: auto;
+        }
+
+        .unit-tab {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 16px 24px;
+            background: none;
+            border: none;
+            font-family: 'Google Sans', sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            color: #5f6368;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+            white-space: nowrap;
+            min-width: fit-content;
+        }
+
+        .unit-tab:hover {
+            background: #f8f9fa;
+            color: #1967d2;
+        }
+
+        .unit-tab.active {
+            color: #1967d2;
+            border-bottom-color: #1a73e8;
+            background: linear-gradient(135deg, rgba(26, 115, 232, 0.05), rgba(26, 115, 232, 0.02));
+        }
+
+        .unit-tab svg {
+            opacity: 0.7;
+            transition: opacity 0.3s;
+        }
+
+        .unit-tab:hover svg,
+        .unit-tab.active svg {
+            opacity: 1;
+        }
+
+        /* Organigrama editor styles */
+        .org-editor {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 24px;
+            margin-top: 20px;
+            border: 2px dashed #c41e3a;
+        }
+
+        .org-editor.editing {
+            border-style: solid;
+            background: #ffffff;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .org-member-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 20px;
+            padding: 20px;
+            background: #ffffff;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #5f6368;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group input, .form-group select {
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s;
+            font-family: 'Google Sans', sans-serif;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #1a73e8;
+            background: #f8f9ff;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            grid-column: span 2;
+            margin-top: 12px;
+        }
+
+        .org-member-card {
+            position: relative;
+            padding: 20px;
+            transition: all 0.3s;
+        }
+
+        .org-member-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+        }
+
+        .org-member-card .delete-member {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #ea4335;
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .org-member-card:hover .delete-member {
+            display: flex;
+        }
+
+        .org-member-card .delete-member:hover {
+            background: #c41e3a;
+            transform: scale(1.1);
+        }
+
+        .org-empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #5f6368;
+        }
+
+        .org-empty-state h3 {
+            font-size: 20px;
+            margin-bottom: 12px;
+            color: #1a73e8;
+        }
+
+        .org-empty-state p {
+            font-size: 14px;
+            margin-bottom: 24px;
+        }
+
+        .btn-add-member {
+            background: linear-gradient(135deg, #1a73e8, #4285f4);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 8px;
+            font-family: 'Google Sans', sans-serif;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-add-member:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(26, 115, 232, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header con logo de Bafar -->
+    <header class="header">
+        <div class="header-left">
+            <button class="menu-btn" id="menuBtn">
+                <svg class="menu-icon" viewBox="0 0 24 24">
+                    <path fill="currentColor" d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+                </svg>
+            </button>
+            <div class="logo">
+                <div class="logo-container">
+                    <img src="bafar solo logo.png" alt="Grupo Bafar" onerror="this.style.display='none';">
+                </div>
+                <div class="logo-text-expand">
+                    <div class="logo-title">Intelligence Hub</div>
+                    <div class="logo-subtitle">Grupo Bafar</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="search-container">
+            <div class="search-box">
+                <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24">
+                    <path fill="currentColor" d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                </svg>
+                <input type="text" class="search-input" placeholder="Buscar unidad de negocio..." id="searchInput">
+            </div>
+        </div>
+
+        <div class="header-actions">
+            <button class="header-btn header-btn-secondary" onclick="showNotifications()">
+                <svg width="20" height="20" viewBox="0 0 24 24">
+                    <path fill="currentColor" d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/>
+                </svg>
+                <span>Notificaciones</span>
+            </button>
+            <button class="header-btn header-btn-primary" onclick="exportToExcel()">
+                <svg width="20" height="20" viewBox="0 0 24 24">
+                    <path fill="currentColor" d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+                </svg>
+                <span>Exportar</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Sidebar -->
+    <nav class="sidebar" id="sidebar">
+        <div class="nav-section">
+            <div class="nav-section-title">Principal</div>
+            <a class="nav-item active" onclick="showSection('dashboard')">
+                <svg class="nav-icon" viewBox="0 0 24 24">
+                    <path fill="currentColor" d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/>
+                </svg>
+                Dashboard
+            </a>
+            <a class="nav-item" onclick="showSection('units')">
+                <svg class="nav-icon" viewBox="0 0 24 24">
+                    <path fill="currentColor" d="M12 2l-5.5 9h11z M12 22l5.5-9h-11z M3.5 13l4-7v14z M20.5 13l-4 7v-14z"/>
+                </svg>
+                Unidades
+                <span class="nav-badge">19</span>
+            </a>
+        </div>
+        
+        <div class="nav-section">
+            <div class="nav-section-title">Unidades de Negocio</div>
+            <div id="unitsList">
+                <!-- Se llenará dinámicamente -->
+            </div>
+        </div>
+
+        <div class="nav-section">
+            <div class="nav-section-title">Herramientas</div>
+            <a class="nav-item" onclick="showSection('reports')">
+                <svg class="nav-icon" viewBox="0 0 24 24">
+                    <path fill="currentColor" d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+                </svg>
+                Reportes
+            </a>
+            <a class="nav-item" onclick="showSection('analytics')">
+                <svg class="nav-icon" viewBox="0 0 24 24">
+                    <path fill="currentColor" d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
+                </svg>
+                Análisis
+            </a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content" id="mainContent">
+        <!-- Dashboard Section -->
+        <div id="dashboard-section" class="content-section">
+            <h1 class="page-title">Dashboard General</h1>
+            <p class="page-subtitle">Resumen ejecutivo de todas las unidades de negocio</p>
+            
+            <!-- Dashboard Grid -->
+            <div class="dashboard-grid" id="statsGrid">
+                <div class="stat-card">
+                    <div class="stat-icon">🏢</div>
+                    <div class="stat-value">19</div>
+                    <div class="stat-label">Unidades Totales</div>
+                    <div class="stat-change positive">
+                        <svg width="16" height="16" viewBox="0 0 24 24">
+                            <path fill="currentColor" d="M7 14l5-5 5 5z"/>
+                        </svg>
+                        100% activas
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">💰</div>
+                    <div class="stat-value">$2.5M</div>
+                    <div class="stat-label">Ventas del Mes</div>
+                    <div class="stat-change positive">
+                        <svg width="16" height="16" viewBox="0 0 24 24">
+                            <path fill="currentColor" d="M7 14l5-5 5 5z"/>
+                        </svg>
+                        +15.3%
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📊</div>
+                    <div class="stat-value">94.2%</div>
+                    <div class="stat-label">Cumplimiento</div>
+                    <div class="stat-change positive">
+                        <svg width="16" height="16" viewBox="0 0 24 24">
+                            <path fill="currentColor" d="M7 14l5-5 5 5z"/>
+                        </svg>
+                        +2.8%
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">👥</div>
+                    <div class="stat-value">847</div>
+                    <div class="stat-label">Empleados</div>
+                    <div class="stat-change negative">
+                        <svg width="16" height="16" viewBox="0 0 24 24">
+                            <path fill="currentColor" d="M7 10l5 5 5-5z"/>
+                        </svg>
+                        -1.2%
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📋</div>
+                    <div class="stat-value">127</div>
+                    <div class="stat-label">Peticiones Activas</div>
+                    <div class="stat-change positive">
+                        <svg width="16" height="16" viewBox="0 0 24 24">
+                            <path fill="currentColor" d="M7 14l5-5 5 5z"/>
+                        </svg>
+                        +12 nuevas
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🚀</div>
+                    <div class="stat-value">45</div>
+                    <div class="stat-label">Proyectos Activos</div>
+                    <div class="stat-change positive">
+                        <svg width="16" height="16" viewBox="0 0 24 24">
+                            <path fill="currentColor" d="M7 14l5-5 5 5z"/>
+                        </svg>
+                        +8 nuevos
+                    </div>
+                </div>
+            </div>
+
+            <!-- Welcome Card -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <svg width="24" height="24" viewBox="0 0 24 24" style="color: #1a73e8;">
+                            <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                        </svg>
+                        Bienvenido al Intelligence Hub de Grupo Bafar
+                    </div>
+                </div>
+                <div class="card-content">
+                    <p style="font-size: 16px; color: #5f6368; line-height: 1.6; margin-bottom: 20px;">
+                        Plataforma integral para la gestión y monitoreo de las 19 unidades de negocio de Grupo Bafar. 
+                        Aquí puedes visualizar métricas clave, gestionar proyectos, solicitudes, reportes y mantener 
+                        comunicación efectiva con todas las áreas.
+                    </p>
+                    <div style="display: flex; gap: 16px; flex-wrap: wrap;">
+                        <button class="header-btn header-btn-primary" onclick="showSection('units')">
+                            <svg width="20" height="20" viewBox="0 0 24 24">
+                                <path fill="currentColor" d="M12 2l-5.5 9h11z"/>
+                            </svg>
+                            Explorar Unidades
+                        </button>
+                        <button class="header-btn header-btn-secondary" onclick="showSection('analytics')">
+                            <svg width="20" height="20" viewBox="0 0 24 24">
+                                <path fill="currentColor" d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
+                            </svg>
+                            Ver Análisis
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Units Section -->
+        <div id="units-section" class="content-section" style="display: none;">
+            <h1 class="page-title">Unidades de Negocio</h1>
+            <p class="page-subtitle">Gestión y monitoreo de las 19 unidades estratégicas de Grupo Bafar</p>
+            
+            <div class="dashboard-grid" id="unitsGrid">
+                <!-- Units will be populated dynamically -->
+            </div>
+        </div>
+
+        <!-- Reports Section -->
+        <div id="reports-section" class="content-section" style="display: none;">
+            <h1 class="page-title">Centro de Reportes</h1>
+            <p class="page-subtitle">Reportes y documentación consolidada de todas las unidades</p>
+            
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <svg width="24" height="24" viewBox="0 0 24 24" style="color: #1a73e8;">
+                            <path fill="currentColor" d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+                        </svg>
+                        Reportes Disponibles
+                    </div>
+                </div>
+                <div class="card-content">
+                    <p>Sistema de reportes en desarrollo. Próximamente estará disponible la generación automática de reportes consolidados.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analytics Section -->
+        <div id="analytics-section" class="content-section" style="display: none;">
+            <h1 class="page-title">Centro de Análisis</h1>
+            <p class="page-subtitle">Análisis avanzado y visualización de datos empresariales</p>
+            
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <svg width="24" height="24" viewBox="0 0 24 24" style="color: #1a73e8;">
+                            <path fill="currentColor" d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
+                        </svg>
+                        Análisis Empresarial
+                    </div>
+                </div>
+                <div class="card-content">
+                    <p>Módulo de análisis avanzado en desarrollo. Incluirá dashboards interactivos, métricas personalizadas y análisis predictivo.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Unit Details Section -->
+        <div id="unit-details-section" class="content-section" style="display: none;">
+            <div id="unit-details-content">
+                <!-- Unit details will be populated dynamically -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Toast notification -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // Check authentication first
+        function checkAuth() {
+            const token = localStorage.getItem('bafar_auth_token');
+            if (!token) {
+                // No token, redirect to login
+                window.location.href = 'login-original.html';
+                return false;
+            }
+            
+            // Validate token (check if not expired - 24 hours)
+            try {
+                const tokenData = atob(token).split(':');
+                const tokenTime = parseInt(tokenData[1]);
+                const now = Date.now();
+                const hoursSinceLogin = (now - tokenTime) / (1000 * 60 * 60);
+                
+                if (hoursSinceLogin >= 24) {
+                    // Token expired
+                    localStorage.removeItem('bafar_auth_token');
+                    localStorage.removeItem('bafar_username');
+                    window.location.href = 'login-original.html';
+                    return false;
+                }
+                
+                // Token valid, show username
+                const username = localStorage.getItem('bafar_username') || 'Usuario';
+                console.log('Bienvenido:', username);
+                return true;
+            } catch (e) {
+                // Invalid token
+                localStorage.removeItem('bafar_auth_token');
+                localStorage.removeItem('bafar_username');
+                window.location.href = 'login-original.html';
+                return false;
+            }
+        }
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check authentication before initializing
+            if (checkAuth()) {
+                setupEventListeners();
+                
+                // Initialize with fallback first, then try to load real data
+                initializeUnitsWithFallback();
+                
+                // Add logout functionality
+                addLogoutButton();
+            }
+        });
+
+        // Initialize units with immediate fallback
+        async function initializeUnitsWithFallback() {
+            console.log('Initializing units with fallback...');
+            
+            // Try to load real data first
+            try {
+                if (!appData) {
+                    console.log('Loading data.json...');
+                    appData = await loadDataFromJSON();
+                    console.log('Data loaded successfully. Units:', appData?.units?.length, 'Organizational data keys:', Object.keys(appData?.organizational || {}));
+                }
+            } catch (error) {
+                console.error('Error loading data:', error);
+            }
+            
+            // Always show units (either from data or fallback)
+            if (appData && appData.units) {
+                console.log('Using real units from data.json');
+            } else {
+                console.log('Using fallback units');
+            }
+        }
+
+        function loadFallbackUnits() {
+            const fallbackUnits = [
+                'DPC', 'Retail', 'Cadena de suministro', 'Marketing', 'CAAS', 
+                'Capital Humano', 'Operaciones', 'Legal y cumplimiento', 'Compras',
+                'Tecnología (IT)', 'Finanzas', 'Calidad', 'Ventas', 'Comercio exterior',
+                'Proyectos especiales', 'I+D', 'Sustentabilidad', 'Seguridad', 'Auditoría'
+            ];
+
+            const unitsList = document.getElementById('unitsList');
+            if (!unitsList) return;
+            
+            unitsList.innerHTML = '';
+            
+            fallbackUnits.forEach((unitName, index) => {
+                const navItem = document.createElement('a');
+                navItem.className = 'nav-item';
+                navItem.innerHTML = `
+                    <svg class="nav-icon" viewBox="0 0 24 24">
+                        <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                    </svg>
+                    ${unitName}
+                `;
+                navItem.onclick = () => showUnitDetails({ id: index + 1, name: unitName, responsible: 'No asignado' });
+                unitsList.appendChild(navItem);
+            });
+        }
+
+        function loadRealUnits() {
+            if (!appData || !appData.units) return;
+            
+            const unitsList = document.getElementById('unitsList');
+            if (!unitsList) return;
+            
+            unitsList.innerHTML = '';
+            
+            appData.units.forEach(unit => {
+                const navItem = document.createElement('a');
+                navItem.className = 'nav-item';
+                navItem.setAttribute('data-unit-id', unit.id);
+                navItem.innerHTML = `
+                    <svg class="nav-icon" viewBox="0 0 24 24">
+                        <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                    </svg>
+                    ${unit.name}
+                    ${unit.responsible ? `<span style="font-size: 11px; opacity: 0.6; display: block;">${unit.responsible}</span>` : ''}
+                `;
+                navItem.onclick = () => showUnitDetails(unit);
+                unitsList.appendChild(navItem);
+            });
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Menu toggle
+            document.getElementById('menuBtn').addEventListener('click', () => {
+                document.getElementById('sidebar').classList.toggle('collapsed');
+                document.getElementById('mainContent').classList.toggle('expanded');
+            });
+
+            // Search functionality
+            document.getElementById('searchInput').addEventListener('input', function(e) {
+                // Implementar búsqueda
+                console.log('Searching:', e.target.value);
+            });
+        }
+
+        // Global data storage
+        let appData = null;
+
+        // Load data from JSON
+        async function loadDataFromJSON() {
+            try {
+                console.log('Fetching data.json...');
+                const response = await fetch('./data.json');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                appData = await response.json();
+                console.log('Data loaded successfully!');
+                console.log('- Units:', appData.units ? appData.units.length : 0);
+                console.log('- Organizational data for units:', appData.organizational ? Object.keys(appData.organizational) : []);
+                return appData;
+            } catch (error) {
+                console.error('Error loading data.json:', error);
+                showToast('Error cargando datos del sistema');
+                return null;
+            }
+        }
+
+        // Legacy function - now redirects to new approach
+        async function loadUnits() {
+            if (appData && appData.units) {
+                loadRealUnits();
+            } else {
+                loadFallbackUnits();
+            }
+        }
+
+        // Show section
+        function showSection(section) {
+            // Hide all content sections
+            const sections = document.querySelectorAll('.content-section');
+            sections.forEach(s => {
+                s.style.display = 'none';
+            });
+            
+            // Show the selected section
+            const targetSection = document.getElementById(`${section}-section`);
+            if (targetSection) {
+                targetSection.style.display = 'block';
+            }
+            
+            // Update navigation states
+            updateNavigationState(section);
+            
+            // Load section-specific content
+            switch(section) {
+                case 'units':
+                    loadUnitsSection();
+                    break;
+                case 'reports':
+                    // Reports content already loaded
+                    break;
+                case 'analytics':
+                    // Analytics content already loaded
+                    break;
+                case 'dashboard':
+                default:
+                    // Dashboard content already loaded
+                    break;
+            }
+            
+            showToast(`Navegando a: ${getSectionDisplayName(section)}`);
+        }
+        
+        // Update navigation states
+        function updateNavigationState(activeSection) {
+            // Remove active class from all nav items
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Add active class to current section
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => {
+                const onclick = item.getAttribute('onclick');
+                if (onclick && onclick.includes(`'${activeSection}'`)) {
+                    item.classList.add('active');
+                }
+            });
+        }
+        
+        // Get display name for section
+        function getSectionDisplayName(section) {
+            const names = {
+                'dashboard': 'Dashboard General',
+                'units': 'Unidades de Negocio',
+                'reports': 'Centro de Reportes',
+                'analytics': 'Centro de Análisis'
+            };
+            return names[section] || section;
+        }
+        
+        // Load units section content
+        function loadUnitsSection() {
+            console.log('Loading units section...');
+            const unitsGrid = document.getElementById('unitsGrid');
+            if (!unitsGrid) {
+                console.error('unitsGrid element not found');
+                return;
+            }
+            
+            // Load data if not already loaded
+            if (!appData) {
+                console.log('Loading data.json for units...');
+                loadDataFromJSON().then(() => {
+                    // Re-run this function after data loads
+                    if (appData && appData.units) {
+                        loadUnitsSection();
+                    }
+                });
+                return;
+            }
+            
+            console.log('unitsGrid found, clearing content...');
+            unitsGrid.innerHTML = '';
+
+            // Check if we have real data
+            if (appData && appData.units && appData.units.length > 0) {
+                console.log('Using real data from JSON:', appData.units.length, 'units');
+                
+                // Use real data from JSON
+                appData.units.forEach(unit => {
+                    const hasOrganigrama = appData.organizational && appData.organizational[unit.id];
+                    const orgCount = hasOrganigrama ? appData.organizational[unit.id].length : 0;
+                    
+                    const unitCard = document.createElement('div');
+                    unitCard.className = 'stat-card';
+                    unitCard.style.cursor = 'pointer';
+                    unitCard.innerHTML = `
+                        <div class="stat-icon">🏢</div>
+                        <div class="stat-value" style="font-size: 16px; margin-bottom: 8px;">${unit.name}</div>
+                        <div class="stat-label">Responsable: ${unit.responsible || 'No asignado'}</div>
+                        <div style="font-size: 12px; color: #5f6368; margin: 8px 0;">
+                            ${unit.status ? `Estado: ${unit.status}` : 'Estado: Activo'}
+                            ${orgCount > 0 ? `<br>Organigrama: ${orgCount} miembros` : '<br>Organigrama: No disponible'}
+                        </div>
+                        <div class="stat-change neutral">
+                            <button class="header-btn header-btn-primary" onclick="showUnitDetails({id: ${unit.id}, name: '${unit.name.replace(/'/g, '\\'')}', responsible: '${(unit.responsible || 'No asignado').replace(/'/g, '\\'')}'})" style="margin-top: 8px; padding: 8px 16px; font-size: 12px;">
+                                Ver detalles
+                            </button>
+                        </div>
+                    `;
+                    unitsGrid.appendChild(unitCard);
+                });
+                console.log(`Added ${appData.units.length} units from data.json`);
+            } else {
+                // Fallback if no data
+                console.log('No data found, using fallback units');
+                const fallbackUnits = [
+                    'DPC', 'Retail', 'Cadena de suministro', 'Marketing', 'CAAS', 
+                    'Capital Humano', 'Operaciones', 'Legal y cumplimiento', 'Compras',
+                    'Tecnología (IT)', 'Finanzas', 'Calidad', 'Ventas', 'Comercio exterior',
+                    'Proyectos especiales', 'I+D', 'Sustentabilidad', 'Seguridad', 'Auditoría'
+                ];
+                
+                fallbackUnits.forEach((unitName, index) => {
+                    const unitCard = document.createElement('div');
+                    unitCard.className = 'stat-card';
+                    unitCard.style.cursor = 'pointer';
+                    unitCard.innerHTML = `
+                        <div class="stat-icon">🏢</div>
+                        <div class="stat-value" style="font-size: 16px; margin-bottom: 8px;">${unitName}</div>
+                        <div class="stat-label">Responsable: No asignado</div>
+                        <div style="font-size: 12px; color: #5f6368; margin: 8px 0;">
+                            Estado: Pendiente<br>Organigrama: No disponible
+                        </div>
+                        <div class="stat-change neutral">
+                            <button class="header-btn header-btn-primary" onclick="showUnitDetails({id: ${index + 1}, name: '${unitName}', responsible: 'No asignado'})" style="margin-top: 8px; padding: 8px 16px; font-size: 12px;">
+                                Ver detalles
+                            </button>
+                        </div>
+                    `;
+                    unitsGrid.appendChild(unitCard);
+                });
+            }
+        }
+
+        // Show unit details
+        function showUnitDetails(unit) {
+            // Handle both object and string inputs
+            if (typeof unit === 'string') {
+                // Find unit in appData
+                if (appData && appData.units) {
+                    const foundUnit = appData.units.find(u => u.name === unit);
+                    if (foundUnit) {
+                        unit = foundUnit;
+                    } else {
+                        // Fallback for legacy calls
+                        unit = { name: unit, id: 0, responsible: 'No asignado' };
+                    }
+                }
+            }
+
+            // Hide all content sections
+            const sections = document.querySelectorAll('.content-section');
+            sections.forEach(s => {
+                s.style.display = 'none';
+            });
+            
+            // Show unit details section
+            const unitDetailsSection = document.getElementById('unit-details-section');
+            const unitDetailsContent = document.getElementById('unit-details-content');
+            
+            if (unitDetailsSection && unitDetailsContent) {
+                // Create unit details content
+                unitDetailsContent.innerHTML = `
+                    <div style="margin-bottom: 24px;">
+                        <button class="header-btn header-btn-secondary" onclick="showSection('units')" style="margin-bottom: 16px;">
+                            <svg width="20" height="20" viewBox="0 0 24 24">
+                                <path fill="currentColor" d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+                            </svg>
+                            Volver a Unidades
+                        </button>
+                    </div>
+                    
+                    <h1 class="page-title">${unit.name}</h1>
+                    <p class="page-subtitle">Responsable: ${unit.responsible || 'No asignado'} | ${unit.frequency || 'Frecuencia no definida'}</p>
+                    
+                    <!-- Unit Tabs -->
+                    <div class="card" style="margin-bottom: 24px;">
+                        <div class="card-content" style="padding: 0;">
+                            <div class="unit-tabs">
+                                <button class="unit-tab active" onclick="showUnitTab(${unit.id}, 'principal')">
+                                    <svg width="20" height="20" viewBox="0 0 24 24">
+                                        <path fill="currentColor" d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/>
+                                    </svg>
+                                    Principal
+                                </button>
+                                <button class="unit-tab" onclick="showUnitTab(${unit.id}, 'noticias')">
+                                    <svg width="20" height="20" viewBox="0 0 24 24">
+                                        <path fill="currentColor" d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+                                    </svg>
+                                    Noticias
+                                </button>
+                                <button class="unit-tab" onclick="showUnitTab(${unit.id}, 'reportes')">
+                                    <svg width="20" height="20" viewBox="0 0 24 24">
+                                        <path fill="currentColor" d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+                                    </svg>
+                                    Reportes
+                                </button>
+                                <button class="unit-tab" onclick="showUnitTab(${unit.id}, 'organigrama')">
+                                    <svg width="20" height="20" viewBox="0 0 24 24">
+                                        <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                                    </svg>
+                                    Organigrama
+                                </button>
+                                <button class="unit-tab" onclick="showUnitTab(${unit.id}, 'solicitudes')">
+                                    <svg width="20" height="20" viewBox="0 0 24 24">
+                                        <path fill="currentColor" d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                                    </svg>
+                                    Solicitudes
+                                </button>
+                                <button class="unit-tab" onclick="showUnitTab(${unit.id}, 'proyectos')">
+                                    <svg width="20" height="20" viewBox="0 0 24 24">
+                                        <path fill="currentColor" d="M19 7h-3V6c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v1H5c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V9c0-1.1-.9-2-2-2zm-7 0h-2V6h2v1z"/>
+                                    </svg>
+                                    Proyectos
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Unit Tab Content -->
+                    <div id="unit-tab-content">
+                        <!-- Tab content will be loaded here -->
+                    </div>
+                `;
+                
+                unitDetailsSection.style.display = 'block';
+                
+                // Load initial tab content
+                showUnitTab(unit.id, 'principal');
+            }
+            
+            showToast(`Abriendo detalles de: ${unit.name}`);
+        }
+
+        // Helper function for showUnitDetails with simplified parameters
+        function showUnitDetailsByName(unitName, unitId) {
+            const unit = {
+                id: unitId,
+                name: unitName,
+                responsible: 'No asignado'
+            };
+            showUnitDetails(unit);
+        }
+
+        // Render organigrama tab with editing capabilities
+        function renderOrganigramaTab(unit) {
+            const tabContent = document.getElementById('unit-tab-content');
+            const unitId = unit.id;
+            
+            // Load data if not already loaded
+            if (!appData) {
+                loadDataFromJSON().then(() => {
+                    if (appData) {
+                        renderOrganigramaTab(unit);
+                    }
+                });
+                return;
+            }
+            
+            const orgData = appData && appData.organizational && appData.organizational[unitId];
+            console.log('Rendering organigrama for unit', unitId, 'with data:', orgData);
+            
+            tabContent.innerHTML = `
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <svg width="24" height="24" viewBox="0 0 24 24" style="color: #1a73e8;">
+                                <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                            </svg>
+                            Organigrama - ${unit.name} ${orgData ? `(${orgData.length} miembros)` : ''}
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <p style="color: #5f6368; margin-bottom: 20px;">Estructura organizacional y directorio de contactos de la unidad.</p>
+                        <div style="display: flex; gap: 12px; margin-bottom: 16px;">
+                            <button class="header-btn header-btn-primary" onclick="toggleOrgEditor(${unitId})">
+                                <svg width="16" height="16" viewBox="0 0 24 24">
+                                    <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/>
+                                </svg>
+                                <span id="edit-btn-text-${unitId}">Editar Organigrama</span>
+                            </button>
+                            <button class="header-btn header-btn-secondary" onclick="exportOrgToPDF(${unitId})">
+                                <svg width="16" height="16" viewBox="0 0 24 24">
+                                    <path fill="currentColor" d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+                                </svg>
+                                Exportar PDF
+                            </button>
+                            <button class="header-btn header-btn-secondary" onclick="saveOrgChanges(${unitId})" id="save-btn-${unitId}" style="display: none;">
+                                <svg width="16" height="16" viewBox="0 0 24 24">
+                                    <path fill="currentColor" d="M17,3H5C3.89,3 3,3.9 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V7L17,3M19,19H5V5H16.17L19,7.83V19Z"/>
+                                </svg>
+                                Guardar Cambios
+                            </button>
+                        </div>
+                        <div id="org-content-${unitId}">
+                            ${renderOrgContent(unitId, orgData)}
+                        </div>
+                        <div class="org-editor" id="org-editor-${unitId}" style="display: none;">
+                            <h3 style="margin-bottom: 20px; color: #1a73e8;">✏️ Editor de Organigrama</h3>
+                            <div class="org-member-form">
+                                <div class="form-group">
+                                    <label>Nombre Completo</label>
+                                    <input type="text" id="member-name-${unitId}" placeholder="Ej: Juan Carlos Pérez">
+                                </div>
+                                <div class="form-group">
+                                    <label>Título/Puesto</label>
+                                    <input type="text" id="member-title-${unitId}" placeholder="Ej: Director de Operaciones">
+                                </div>
+                                <div class="form-group">
+                                    <label>Email</label>
+                                    <input type="email" id="member-email-${unitId}" placeholder="Ej: juan.perez@bafar.com.mx">
+                                </div>
+                                <div class="form-group">
+                                    <label>Reporta a</label>
+                                    <select id="member-parent-${unitId}">
+                                        <option value="">Director (sin jefe)</option>
+                                    </select>
+                                </div>
+                                <div class="form-actions">
+                                    <button type="button" class="header-btn header-btn-secondary" onclick="clearMemberForm(${unitId})">Limpiar</button>
+                                    <button type="button" class="btn-add-member" onclick="addOrgMember(${unitId})">
+                                        <svg width="16" height="16" viewBox="0 0 24 24">
+                                            <path fill="currentColor" d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                                        </svg>
+                                        Agregar Miembro
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Render organization content
+        function renderOrgContent(unitId, orgData) {
+            if (orgData && orgData.length > 0) {
+                return `
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px;" id="org-grid-${unitId}">
+                        ${orgData.map(member => `
+                            <div class="stat-card org-member-card" data-member-id="${member.id}">
+                                <button class="delete-member" onclick="deleteOrgMember(${unitId}, '${member.id}')" title="Eliminar miembro">
+                                    ×
+                                </button>
+                                <div class="stat-icon" style="background: linear-gradient(135deg, #1a73e8, #4285f4); margin-bottom: 12px;">
+                                    👤
+                                </div>
+                                <div style="font-size: 16px; font-weight: 600; color: #202124; margin-bottom: 8px;">
+                                    ${member.name}
+                                </div>
+                                <div style="font-size: 14px; color: #1a73e8; margin-bottom: 8px;">
+                                    ${member.title}
+                                </div>
+                                ${member.email ? `
+                                    <div style="font-size: 12px; color: #5f6368;">
+                                        📧 ${member.email}
+                                    </div>
+                                ` : ''}
+                                ${member.parentId ? `
+                                    <div style="font-size: 11px; color: #5f6368; margin-top: 8px;">
+                                        Reporta a: ${orgData.find(p => p.id === member.parentId)?.name || 'Director'}
+                                    </div>
+                                ` : `
+                                    <div style="font-size: 11px; color: #c41e3a; margin-top: 8px; font-weight: 600;">
+                                        🏆 DIRECTOR
+                                    </div>
+                                `}
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            } else {
+                return `
+                    <div class="org-empty-state">
+                        <div style="font-size: 48px; margin-bottom: 16px;">👥</div>
+                        <h3>Organigrama vacío</h3>
+                        <p>Esta unidad no tiene estructura organizacional cargada.</p>
+                        <button class="btn-add-member" onclick="toggleOrgEditor(${unitId})">
+                            <svg width="16" height="16" viewBox="0 0 24 24">
+                                <path fill="currentColor" d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                            </svg>
+                            Crear Organigrama
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        // Show unit tab content
+        function showUnitTab(unitId, tab) {
+            console.log('showUnitTab called with unitId:', unitId, 'tab:', tab);
+            
+            // Load data if not already loaded
+            if (!appData) {
+                loadDataFromJSON().then(() => {
+                    if (appData) {
+                        showUnitTab(unitId, tab);
+                    }
+                });
+                return;
+            }
+            
+            // Get unit data - handle both real data and fallback
+            let unit = null;
+            
+            if (appData && appData.units) {
+                unit = appData.units.find(u => u.id == unitId);
+            }
+            
+            // If no unit found in real data, create fallback unit
+            if (!unit) {
+                const fallbackUnits = [
+                    'DPC', 'Retail', 'Cadena de suministro', 'Marketing', 'CAAS', 
+                    'Capital Humano', 'Operaciones', 'Legal y cumplimiento', 'Compras',
+                    'Tecnología (IT)', 'Finanzas', 'Calidad', 'Ventas', 'Comercio exterior',
+                    'Proyectos especiales', 'I+D', 'Sustentabilidad', 'Seguridad', 'Auditoría'
+                ];
+                
+                const unitIndex = unitId - 1;
+                if (unitIndex >= 0 && unitIndex < fallbackUnits.length) {
+                    unit = {
+                        id: unitId,
+                        name: fallbackUnits[unitIndex],
+                        responsible: 'No asignado'
+                    };
+                } else {
+                    console.error('Unit not found:', unitId);
+                    return;
+                }
+            }
+
+            // Update tab states
+            document.querySelectorAll('.unit-tab').forEach(tabButton => {
+                tabButton.classList.remove('active');
+                const onclick = tabButton.getAttribute('onclick');
+                if (onclick && onclick.includes(`'${tab}'`)) {
+                    tabButton.classList.add('active');
+                }
+            });
+            
+            // Load tab content
+            const tabContent = document.getElementById('unit-tab-content');
+            if (!tabContent) return;
+            
+            switch(tab) {
+                case 'principal':
+                    tabContent.innerHTML = `
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-title">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" style="color: #1a73e8;">
+                                        <path fill="currentColor" d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/>
+                                    </svg>
+                                    Dashboard - ${unit}
+                                </div>
+                            </div>
+                            <div class="card-content">
+                                <div class="dashboard-grid">
+                                    <div class="stat-card">
+                                        <div class="stat-icon">👥</div>
+                                        <div class="stat-value">45</div>
+                                        <div class="stat-label">Empleados</div>
+                                    </div>
+                                    <div class="stat-card">
+                                        <div class="stat-icon">📈</div>
+                                        <div class="stat-value">92%</div>
+                                        <div class="stat-label">Performance</div>
+                                    </div>
+                                    <div class="stat-card">
+                                        <div class="stat-icon">💼</div>
+                                        <div class="stat-value">12</div>
+                                        <div class="stat-label">Proyectos Activos</div>
+                                    </div>
+                                    <div class="stat-card">
+                                        <div class="stat-icon">📋</div>
+                                        <div class="stat-value">8</div>
+                                        <div class="stat-label">Solicitudes Pendientes</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                case 'noticias':
+                    tabContent.innerHTML = `
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-title">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" style="color: #1a73e8;">
+                                        <path fill="currentColor" d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+                                    </svg>
+                                    Noticias y Comunicados - ${unit}
+                                </div>
+                            </div>
+                            <div class="card-content">
+                                <p style="color: #5f6368; margin-bottom: 20px;">Centro de noticias y comunicados internos para la unidad.</p>
+                                <div style="display: flex; gap: 12px; margin-bottom: 16px;">
+                                    <button class="header-btn header-btn-primary">
+                                        <svg width="16" height="16" viewBox="0 0 24 24">
+                                            <path fill="currentColor" d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                                        </svg>
+                                        Nueva Noticia
+                                    </button>
+                                    <button class="header-btn header-btn-secondary">Ver Archivo</button>
+                                </div>
+                                <p style="color: #5f6368; font-style: italic;">Funcionalidad en desarrollo...</p>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                case 'reportes':
+                    tabContent.innerHTML = `
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-title">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" style="color: #1a73e8;">
+                                        <path fill="currentColor" d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+                                    </svg>
+                                    Centro de Reportes - ${unit}
+                                </div>
+                            </div>
+                            <div class="card-content">
+                                <p style="color: #5f6368; margin-bottom: 20px;">Generación y gestión de reportes específicos de la unidad.</p>
+                                <div style="display: flex; gap: 12px; margin-bottom: 16px;">
+                                    <button class="header-btn header-btn-primary">
+                                        <svg width="16" height="16" viewBox="0 0 24 24">
+                                            <path fill="currentColor" d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+                                        </svg>
+                                        Generar Reporte
+                                    </button>
+                                    <button class="header-btn header-btn-secondary">Ver Historial</button>
+                                </div>
+                                <p style="color: #5f6368; font-style: italic;">Funcionalidad en desarrollo...</p>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                case 'organigrama':
+                    renderOrganigramaTab(unit);
+                    break;
+                case 'solicitudes':
+                    tabContent.innerHTML = `
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-title">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" style="color: #1a73e8;">
+                                        <path fill="currentColor" d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                                    </svg>
+                                    Gestión de Solicitudes - ${unit}
+                                </div>
+                            </div>
+                            <div class="card-content">
+                                <p style="color: #5f6368; margin-bottom: 20px;">Centro de solicitudes y requerimientos internos de la unidad.</p>
+                                <div class="dashboard-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); margin-bottom: 20px;">
+                                    <div class="stat-card">
+                                        <div class="stat-icon" style="background: #ea4335;">📥</div>
+                                        <div class="stat-value">8</div>
+                                        <div class="stat-label">Pendientes</div>
+                                    </div>
+                                    <div class="stat-card">
+                                        <div class="stat-icon" style="background: #34a853;">✅</div>
+                                        <div class="stat-value">25</div>
+                                        <div class="stat-label">Completadas</div>
+                                    </div>
+                                    <div class="stat-card">
+                                        <div class="stat-icon" style="background: #fbbc04;">⏳</div>
+                                        <div class="stat-value">3</div>
+                                        <div class="stat-label">En Proceso</div>
+                                    </div>
+                                </div>
+                                <div style="display: flex; gap: 12px;">
+                                    <button class="header-btn header-btn-primary">
+                                        <svg width="16" height="16" viewBox="0 0 24 24">
+                                            <path fill="currentColor" d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                                        </svg>
+                                        Nueva Solicitud
+                                    </button>
+                                    <button class="header-btn header-btn-secondary">Ver Todas</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                case 'proyectos':
+                    tabContent.innerHTML = `
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-title">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" style="color: #1a73e8;">
+                                        <path fill="currentColor" d="M19 7h-3V6c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v1H5c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V9c0-1.1-.9-2-2-2zm-7 0h-2V6h2v1z"/>
+                                    </svg>
+                                    Gestión de Proyectos - ${unit}
+                                </div>
+                            </div>
+                            <div class="card-content">
+                                <p style="color: #5f6368; margin-bottom: 20px;">Administración y seguimiento de proyectos estratégicos de la unidad.</p>
+                                <div class="dashboard-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); margin-bottom: 20px;">
+                                    <div class="stat-card">
+                                        <div class="stat-icon" style="background: #1a73e8;">🚀</div>
+                                        <div class="stat-value">12</div>
+                                        <div class="stat-label">Activos</div>
+                                    </div>
+                                    <div class="stat-card">
+                                        <div class="stat-icon" style="background: #34a853;">✅</div>
+                                        <div class="stat-value">48</div>
+                                        <div class="stat-label">Completados</div>
+                                    </div>
+                                    <div class="stat-card">
+                                        <div class="stat-icon" style="background: #fbbc04;">📋</div>
+                                        <div class="stat-value">5</div>
+                                        <div class="stat-label">Planeados</div>
+                                    </div>
+                                </div>
+                                <div style="display: flex; gap: 12px;">
+                                    <button class="header-btn header-btn-primary">
+                                        <svg width="16" height="16" viewBox="0 0 24 24">
+                                            <path fill="currentColor" d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                                        </svg>
+                                        Nuevo Proyecto
+                                    </button>
+                                    <button class="header-btn header-btn-secondary">Ver Timeline</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                default:
+                    tabContent.innerHTML = `
+                        <div class="card">
+                            <div class="card-content">
+                                <p>Contenido no disponible para esta pestaña.</p>
+                            </div>
+                        </div>
+                    `;
+            }
+        }
+
+        // Export to Excel
+        function exportToExcel() {
+            showToast('Generando archivo Excel...');
+            setTimeout(() => {
+                showToast('Archivo descargado exitosamente');
+            }, 2000);
+        }
+
+        // Show notifications
+        function showNotifications() {
+            showToast('Centro de notificaciones - Próximamente');
+        }
+
+        // Show toast notification
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Add logout button to header
+        function addLogoutButton() {
+            const headerActions = document.querySelector('.header-actions');
+            if (headerActions) {
+                const logoutBtn = document.createElement('button');
+                logoutBtn.className = 'header-btn header-btn-secondary';
+                logoutBtn.innerHTML = `
+                    <svg width="20" height="20" viewBox="0 0 24 24">
+                        <path fill="currentColor" d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/>
+                    </svg>
+                    <span>Salir</span>
+                `;
+                logoutBtn.onclick = logout;
+                headerActions.appendChild(logoutBtn);
+                
+                // Also show username
+                const username = localStorage.getItem('bafar_username') || 'Usuario';
+                const userSpan = document.createElement('span');
+                userSpan.style.color = 'white';
+                userSpan.style.marginRight = '16px';
+                userSpan.style.fontSize = '14px';
+                userSpan.innerHTML = `👤 ${username}`;
+                headerActions.insertBefore(userSpan, headerActions.firstChild);
+            }
+        }
+
+        // Logout function
+        function logout() {
+            if (confirm('¿Desea cerrar sesión?')) {
+                localStorage.removeItem('bafar_auth_token');
+                localStorage.removeItem('bafar_username');
+                window.location.href = 'login-original.html';
+            }
+        }
+
+        // Organigrama Editor Functions
+        function toggleOrgEditor(unitId) {
+            const editor = document.getElementById(`org-editor-${unitId}`);
+            const editBtn = document.getElementById(`edit-btn-text-${unitId}`);
+            const saveBtn = document.getElementById(`save-btn-${unitId}`);
+            
+            if (editor.style.display === 'none') {
+                editor.style.display = 'block';
+                editor.classList.add('editing');
+                editBtn.textContent = 'Cancelar Edición';
+                saveBtn.style.display = 'inline-flex';
+                updateParentOptions(unitId);
+            } else {
+                editor.style.display = 'none';
+                editor.classList.remove('editing');
+                editBtn.textContent = 'Editar Organigrama';
+                saveBtn.style.display = 'none';
+                clearMemberForm(unitId);
+            }
+        }
+
+        function updateParentOptions(unitId) {
+            const select = document.getElementById(`member-parent-${unitId}`);
+            const orgData = appData && appData.organizational && appData.organizational[unitId];
+            
+            // Clear existing options except default
+            select.innerHTML = '<option value="">Director (sin jefe)</option>';
+            
+            if (orgData && orgData.length > 0) {
+                orgData.forEach(member => {
+                    const option = document.createElement('option');
+                    option.value = member.id;
+                    option.textContent = `${member.name} - ${member.title}`;
+                    select.appendChild(option);
+                });
+            }
+        }
+
+        function clearMemberForm(unitId) {
+            document.getElementById(`member-name-${unitId}`).value = '';
+            document.getElementById(`member-title-${unitId}`).value = '';
+            document.getElementById(`member-email-${unitId}`).value = '';
+            document.getElementById(`member-parent-${unitId}`).value = '';
+        }
+
+        function addOrgMember(unitId) {
+            const name = document.getElementById(`member-name-${unitId}`).value.trim();
+            const title = document.getElementById(`member-title-${unitId}`).value.trim();
+            const email = document.getElementById(`member-email-${unitId}`).value.trim();
+            const parentId = document.getElementById(`member-parent-${unitId}`).value;
+
+            if (!name || !title) {
+                showToast('Por favor completa nombre y título');
+                return;
+            }
+
+            // Initialize organizational data if it doesn't exist
+            if (!appData.organizational) {
+                appData.organizational = {};
+            }
+            if (!appData.organizational[unitId]) {
+                appData.organizational[unitId] = [];
+            }
+
+            // Generate new member ID
+            const newMemberId = Date.now().toString();
+
+            const newMember = {
+                id: newMemberId,
+                title: title,
+                name: name,
+                unitId: parseInt(unitId),
+                parentId: parentId || null,
+                email: email || ""
+            };
+
+            // Add to organizational data
+            appData.organizational[unitId].push(newMember);
+
+            // Refresh the organigrama display
+            const orgContent = document.getElementById(`org-content-${unitId}`);
+            orgContent.innerHTML = renderOrgContent(unitId, appData.organizational[unitId]);
+
+            // Update parent options for future additions
+            updateParentOptions(unitId);
+
+            // Clear form
+            clearMemberForm(unitId);
+
+            // Update header count
+            const unit = appData.units.find(u => u.id == unitId);
+            if (unit) {
+                const cardTitle = document.querySelector('.card-title');
+                cardTitle.innerHTML = `
+                    <svg width="24" height="24" viewBox="0 0 24 24" style="color: #1a73e8;">
+                        <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                    </svg>
+                    Organigrama - ${unit.name} (${appData.organizational[unitId].length} miembros)
+                `;
+            }
+
+            showToast(`✅ ${name} agregado al organigrama`);
+        }
+
+        function deleteOrgMember(unitId, memberId) {
+            if (confirm('¿Estás seguro de eliminar este miembro del organigrama?')) {
+                if (appData.organizational && appData.organizational[unitId]) {
+                    // Remove member
+                    appData.organizational[unitId] = appData.organizational[unitId].filter(m => m.id !== memberId);
+
+                    // Also remove this member as parent from others
+                    appData.organizational[unitId].forEach(member => {
+                        if (member.parentId === memberId) {
+                            member.parentId = null;
+                        }
+                    });
+
+                    // Refresh display
+                    const orgContent = document.getElementById(`org-content-${unitId}`);
+                    orgContent.innerHTML = renderOrgContent(unitId, appData.organizational[unitId]);
+
+                    // Update parent options
+                    updateParentOptions(unitId);
+
+                    // Update header count
+                    const unit = appData.units.find(u => u.id == unitId);
+                    if (unit) {
+                        const cardTitle = document.querySelector('.card-title');
+                        cardTitle.innerHTML = `
+                            <svg width="24" height="24" viewBox="0 0 24 24" style="color: #1a73e8;">
+                                <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                            </svg>
+                            Organigrama - ${unit.name} (${appData.organizational[unitId].length} miembros)
+                        `;
+                    }
+
+                    showToast('Miembro eliminado del organigrama');
+                }
+            }
+        }
+
+        function saveOrgChanges(unitId) {
+            // In a real application, this would save to a server
+            // For now, we'll just show a success message and download the updated JSON
+            
+            const unit = appData.units.find(u => u.id == unitId);
+            const memberCount = appData.organizational[unitId] ? appData.organizational[unitId].length : 0;
+            
+            // Create downloadable JSON
+            const dataStr = JSON.stringify(appData, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            const url = URL.createObjectURL(dataBlob);
+            
+            const downloadLink = document.createElement('a');
+            downloadLink.href = url;
+            downloadLink.download = `data-updated-${new Date().toISOString().slice(0,10)}.json`;
+            downloadLink.style.display = 'none';
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+            URL.revokeObjectURL(url);
+            
+            showToast(`✅ Cambios guardados para ${unit?.name} (${memberCount} miembros)`);
+            
+            // Close editor
+            toggleOrgEditor(unitId);
+        }
+
+        function exportOrgToPDF(unitId) {
+            const unit = appData.units.find(u => u.id == unitId);
+            const orgData = appData.organizational && appData.organizational[unitId];
+            const memberCount = orgData ? orgData.length : 0;
+            
+            showToast(`📄 Exportando organigrama de ${unit?.name} (${memberCount} miembros) - Función en desarrollo`);
+        }
+    </script>
+</body>
+</html>

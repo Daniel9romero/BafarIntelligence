@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BAFAR Intelligence Hub - TOP SECRET ACCESS</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: #000;
+            color: #0088ff;
+            min-height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Matrix Rain Effect */
+        #matrix-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            opacity: 0.15;
+            perspective: 500px;
+            transform-style: preserve-3d;
+        }
+
+        .matrix-column {
+            position: absolute;
+            top: -100%;
+            font-size: 20px;
+            line-height: 20px;
+            animation: matrix-fall linear infinite;
+            color: #0088ff;
+            text-shadow: 
+                0 0 5px #0088ff,
+                0 0 10px rgba(0, 136, 255, 0.5),
+                0 2px 4px rgba(0, 0, 0, 0.5);
+            transform: translateZ(0);
+            font-weight: bold;
+            opacity: 0.9;
+        }
+        
+        .matrix-column:nth-child(odd) {
+            color: #00aaff;
+            animation-duration: 15s;
+            transform: translateZ(-50px);
+            opacity: 0.7;
+        }
+        
+        .matrix-column:nth-child(even) {
+            animation-duration: 20s;
+            transform: translateZ(-100px);
+            opacity: 0.5;
+        }
+        
+        .matrix-column:nth-child(3n) {
+            color: #0066cc;
+            animation-duration: 25s;
+            transform: translateZ(-150px);
+            opacity: 0.3;
+        }
+
+        @keyframes matrix-fall {
+            to {
+                top: 100%;
+            }
+        }
+
+        /* Login Container */
+        .login-container {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 100;
+            animation: fadeIn 2s ease-in;
+            width: min(90vw, 450px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: min-content;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -40%);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%);
+            }
+        }
+
+        /* TOP SECRET Badge */
+        .top-secret {
+            background: linear-gradient(45deg, #ff0000, #aa0000);
+            color: white;
+            padding: 10px 30px;
+            font-size: 24px;
+            font-weight: bold;
+            letter-spacing: 5px;
+            margin-bottom: 30px;
+            display: inline-block;
+            position: relative;
+            animation: pulse 2s infinite;
+            clip-path: polygon(0 0, 100% 0, 95% 100%, 5% 100%);
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(255, 0, 0, 0.5); }
+            50% { box-shadow: 0 0 40px rgba(255, 0, 0, 0.8); }
+        }
+
+        /* BAFAR Logo - Hide during login */
+        .logo-container {
+            margin: 30px 0 40px 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            opacity: 0.3;
+        }
+
+        .bafar-logo {
+            max-height: 60px;
+            max-width: 180px;
+            width: auto;
+            height: auto;
+            filter: brightness(1.2) contrast(1.1) drop-shadow(0 0 15px rgba(0, 136, 255, 0.5));
+            transition: all 0.3s ease;
+            opacity: 0.7;
+        }
+
+        /* Fallback text logo if image doesn't work */
+        .logo-fallback {
+            display: none;
+            font-size: 14px;
+            font-weight: bold;
+            color: #0088ff;
+            text-shadow: 0 0 5px #0088ff;
+            letter-spacing: 2px;
+            font-family: 'Courier New', monospace;
+            opacity: 0.7;
+        }
+
+        /* Title */
+        .system-title {
+            font-size: 48px;
+            font-weight: bold;
+            color: #0088ff;
+            text-shadow: 0 0 20px #0088ff;
+            margin: 30px 0;
+            letter-spacing: 3px;
+            animation: glitch 2s infinite;
+        }
+
+        @keyframes glitch {
+            0%, 100% { text-shadow: 0 0 20px #0088ff; }
+            25% { text-shadow: -2px 0 #ff0000, 2px 0 #00ffff; }
+            50% { text-shadow: 2px 0 #ff00ff, -2px 0 #ffff00; }
+            75% { text-shadow: 0 0 20px #0088ff; }
+        }
+
+        /* Login Form */
+        .login-form {
+            background: rgba(0, 10, 30, 0.95);
+            border: 2px solid #0088ff;
+            padding: clamp(20px, 3vw, 35px);
+            border-radius: 10px;
+            box-shadow: 0 0 50px rgba(0, 136, 255, 0.3);
+            width: 100%;
+            margin: 0 auto;
+            position: relative;
+            box-sizing: border-box;
+        }
+
+        .login-form::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #0088ff, #00aaff, #0088ff);
+            border-radius: 10px;
+            opacity: 0.5;
+            z-index: -1;
+            animation: borderRotate 3s linear infinite;
+        }
+
+        @keyframes borderRotate {
+            0% { filter: hue-rotate(0deg); }
+            100% { filter: hue-rotate(360deg); }
+        }
+
+        .input-group {
+            margin: 30px 0;
+            position: relative;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 14px;
+            color: #0088ff;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 15px;
+            background: #001122;
+            border: 1px solid #0088ff;
+            color: #0088ff;
+            font-size: 16px;
+            font-family: 'Courier New', monospace;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .input-group input:focus {
+            box-shadow: 0 0 20px rgba(0, 136, 255, 0.5);
+            background: #002244;
+        }
+
+        .input-group input::placeholder {
+            color: #004488;
+        }
+
+        /* Access Button */
+        .access-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(45deg, #0088ff, #0066cc);
+            border: none;
+            color: #fff;
+            font-size: 18px;
+            font-weight: bold;
+            letter-spacing: 3px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s;
+            text-transform: uppercase;
+        }
+
+        .access-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(0, 136, 255, 0.8);
+        }
+
+        .access-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Scanning Effect */
+        .scanning {
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 136, 255, 0.4), transparent);
+            animation: scan 2s infinite;
+        }
+
+        @keyframes scan {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        /* Warning Text */
+        .warning {
+            margin-top: 30px;
+            font-size: 12px;
+            color: #ffaa00;
+            text-align: center;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Access Granted/Denied Messages */
+        .access-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 60px;
+            font-weight: bold;
+            z-index: 1000;
+            display: none;
+        }
+        
+        /* Simple Digital Logo Effect */
+        .digital-logo-container {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: none;
+            z-index: 2000;
+            animation: logoFadeIn 0.5s ease-in forwards;
+        }
+        
+        @keyframes logoFadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .digital-logo-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .digital-logo-gif {
+            width: 600px;
+            height: auto;
+            max-width: 80vw;
+        }
+        
+        .loading-message {
+            position: absolute;
+            bottom: -80px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #0088ff;
+            font-family: 'Courier New', monospace;
+            font-size: 18px;
+            text-align: center;
+            text-shadow: 0 0 10px #0088ff;
+            opacity: 0;
+            animation: messageShow 3s ease-in forwards 2.5s;
+            white-space: nowrap;
+        }
+        
+        @keyframes messageShow {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(15px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+        
+        @keyframes tvFlicker {
+            0% { opacity: 0.27861; }
+            5% { opacity: 0.34769; }
+            10% { opacity: 0.23604; }
+            15% { opacity: 0.90626; }
+            20% { opacity: 0.18128; }
+            25% { opacity: 0.83891; }
+            30% { opacity: 0.65583; }
+            35% { opacity: 0.67807; }
+            40% { opacity: 0.26559; }
+            45% { opacity: 0.84693; }
+            50% { opacity: 0.96019; }
+            55% { opacity: 0.08594; }
+            60% { opacity: 0.20313; }
+            65% { opacity: 0.71988; }
+            70% { opacity: 0.53455; }
+            75% { opacity: 0.37288; }
+            80% { opacity: 0.71428; }
+            85% { opacity: 0.70419; }
+            90% { opacity: 0.7003; }
+            95% { opacity: 0.36108; }
+            100% { opacity: 0.24387; }
+        }
+
+        @keyframes tvTurnOn {
+            0% {
+                transform: scaleY(0.001) scaleX(1);
+                filter: brightness(50) blur(2px);
+                opacity: 0;
+            }
+            10% {
+                transform: scaleY(0.01) scaleX(1);
+                filter: brightness(50) blur(2px);
+                opacity: 1;
+            }
+            20% {
+                transform: scaleY(0.1) scaleX(1.3);
+                filter: brightness(3) blur(1px);
+            }
+            30% {
+                transform: scaleY(0.3) scaleX(1.05);
+                filter: brightness(2) blur(0.5px);
+            }
+            40% {
+                transform: scaleY(0.6) scaleX(1.02);
+                filter: brightness(1.5);
+            }
+            70% {
+                transform: scaleY(1.05) scaleX(0.98);
+                filter: brightness(1.2);
+            }
+            80% {
+                transform: scaleY(0.95) scaleX(1.01);
+                filter: brightness(1.1);
+            }
+            90% {
+                transform: scaleY(1.02) scaleX(0.99);
+                filter: brightness(1.05);
+            }
+            100% {
+                transform: scaleY(1) scaleX(1);
+                filter: brightness(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes tvScanlines {
+            0% {
+                background-position: 0 0;
+            }
+            100% {
+                background-position: 0 100%;
+            }
+        }
+
+        .crt-effect {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .crt-effect::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(
+                    rgba(18, 16, 16, 0) 50%, 
+                    rgba(0, 0, 0, 0.25) 50%
+                ),
+                linear-gradient(
+                    90deg, 
+                    rgba(255, 0, 0, 0.06), 
+                    rgba(0, 255, 0, 0.02), 
+                    rgba(0, 0, 255, 0.06)
+                );
+            background-size: 100% 4px, 6px 100%;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .crt-effect::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(18, 16, 16, 0.1);
+            opacity: 0;
+            z-index: 3;
+            pointer-events: none;
+            animation: tvFlicker 0.15s infinite linear alternate;
+        }
+        
+        @keyframes pixelReveal {
+            0% {
+                opacity: 0;
+                filter: 
+                    brightness(0) 
+                    saturate(100%) 
+                    invert(48%) 
+                    sepia(100%) 
+                    saturate(2000%) 
+                    hue-rotate(176deg) 
+                    brightness(3)
+                    drop-shadow(0 0 20px #00ffff)
+                    blur(10px);
+                transform: scale(1.5);
+            }
+            20% {
+                opacity: 0.3;
+                filter: 
+                    brightness(0) 
+                    saturate(100%) 
+                    invert(48%) 
+                    sepia(100%) 
+                    saturate(2000%) 
+                    hue-rotate(176deg) 
+                    brightness(2.5)
+                    drop-shadow(0 0 15px #0088ff)
+                    blur(5px);
+                transform: scale(1.3);
+            }
+            40% {
+                opacity: 0.6;
+                filter: 
+                    brightness(0) 
+                    saturate(100%) 
+                    invert(48%) 
+                    sepia(100%) 
+                    saturate(2000%) 
+                    hue-rotate(176deg) 
+                    brightness(2)
+                    drop-shadow(0 0 10px #0088ff)
+                    blur(2px);
+                transform: scale(1.15);
+            }
+            60% {
+                opacity: 0.8;
+                filter: 
+                    brightness(0) 
+                    saturate(100%) 
+                    invert(48%) 
+                    sepia(100%) 
+                    saturate(2000%) 
+                    hue-rotate(176deg) 
+                    brightness(1.8)
+                    drop-shadow(0 0 8px #0088ff)
+                    blur(1px);
+                transform: scale(1.05);
+            }
+            80% {
+                opacity: 0.9;
+                filter: 
+                    brightness(0) 
+                    saturate(100%) 
+                    invert(48%) 
+                    sepia(100%) 
+                    saturate(2000%) 
+                    hue-rotate(176deg) 
+                    brightness(1.6)
+                    drop-shadow(0 0 5px #0088ff)
+                    blur(0.5px);
+                transform: scale(1.02);
+            }
+            100% {
+                opacity: 1;
+                filter: 
+                    brightness(0) 
+                    saturate(100%) 
+                    invert(48%) 
+                    sepia(100%) 
+                    saturate(2000%) 
+                    hue-rotate(176deg) 
+                    brightness(1.5)
+                    drop-shadow(0 0 15px #0088ff)
+                    drop-shadow(0 0 30px rgba(0, 136, 255, 0.5));
+                transform: scale(1);
+            }
+        }
+        
+
+        .access-granted {
+            color: #0088ff;
+            text-shadow: 0 0 50px #0088ff;
+            animation: zoomIn 0.5s ease-out;
+        }
+
+        .access-denied {
+            color: #ff0000;
+            text-shadow: 0 0 50px #ff0000;
+            animation: shake 0.5s;
+        }
+
+        @keyframes zoomIn {
+            from {
+                transform: translate(-50%, -50%) scale(0);
+                opacity: 0;
+            }
+            to {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translate(-50%, -50%) translateX(0); }
+            25% { transform: translate(-50%, -50%) translateX(-10px); }
+            75% { transform: translate(-50%, -50%) translateX(10px); }
+        }
+
+        /* Terminal Effect */
+        .terminal-text {
+            font-family: 'Courier New', monospace;
+            color: #0088ff;
+            font-size: 12px;
+            margin-top: 20px;
+            text-align: left;
+            opacity: 0.7;
+        }
+
+        .typing-effect {
+            overflow: hidden;
+            white-space: nowrap;
+            animation: typing 3s steps(40, end);
+        }
+
+        @keyframes typing {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+
+        /* Glowing corners */
+        .corner {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #0088ff;
+        }
+
+        .corner-tl {
+            top: -2px;
+            left: -2px;
+            border-right: none;
+            border-bottom: none;
+        }
+
+        .corner-tr {
+            top: -2px;
+            right: -2px;
+            border-left: none;
+            border-bottom: none;
+        }
+
+        .corner-bl {
+            bottom: -2px;
+            left: -2px;
+            border-right: none;
+            border-top: none;
+        }
+
+        .corner-br {
+            bottom: -2px;
+            right: -2px;
+            border-left: none;
+            border-top: none;
+        }
+
+        /* Loading spinner */
+        .loading-spinner {
+            display: none;
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(0, 136, 255, 0.3);
+            border-top: 3px solid #0088ff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .login-form {
+                padding: 20px;
+            }
+            
+            .login-container {
+                width: 95vw;
+            }
+            
+            .bafar-logo {
+                max-height: 70px;
+                max-width: 200px;
+            }
+            
+            .input-group input {
+                padding: 10px;
+                font-size: 14px;
+            }
+            
+            .access-btn {
+                padding: 12px;
+                font-size: 16px;
+            }
+        }
+        
+        @media (min-width: 1920px) {
+            .login-container {
+                width: min(600px, 90vw);
+            }
+            
+            .login-form {
+                padding: 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Matrix Background -->
+    <div id="matrix-bg"></div>
+
+    <!-- Login Container -->
+    <div class="login-container" id="loginContainer">
+        
+        <!-- BAFAR Logo -->
+        <div class="logo-container">
+            <div class="logo-fallback" style="display: block;">GRUPO BAFAR</div>
+        </div>
+        
+        <div class="login-form">
+            <div class="corner corner-tl"></div>
+            <div class="corner corner-tr"></div>
+            <div class="corner corner-bl"></div>
+            <div class="corner corner-br"></div>
+            
+            <div class="terminal-text typing-effect">
+                > Sistema de Inteligencia Competitiva v2.0<br>
+                > Acceso Restringido - Autorización Requerida
+            </div>
+            
+            <form id="loginForm" onsubmit="authenticate(event)">
+                <div class="input-group">
+                    <label for="username">IDENTIFICACIÓN DE USUARIO</label>
+                    <input 
+                        type="text" 
+                        id="username" 
+                        name="username" 
+                        placeholder="Ingrese su código de acceso"
+                        required
+                        autocomplete="off"
+                    >
+                </div>
+                
+                <div class="input-group">
+                    <label for="password">CÓDIGO DE SEGURIDAD</label>
+                    <input 
+                        type="password" 
+                        id="password" 
+                        name="password" 
+                        placeholder="************"
+                        required
+                    >
+                </div>
+                
+                <button type="submit" class="access-btn">
+                    INICIAR AUTENTICACIÓN
+                    <div class="scanning"></div>
+                </button>
+                
+                <div class="loading-spinner" id="loadingSpinner"></div>
+            </form>
+            
+            <div class="warning">
+                ⚠ ADVERTENCIA: Acceso monitoreado y registrado<br>
+                Solo personal autorizado de BAFAR
+            </div>
+        </div>
+    </div>
+
+    <!-- Access Messages -->
+    <div class="access-message access-granted" id="accessGranted">
+        ACCESS GRANTED
+    </div>
+    
+    <div class="access-message access-denied" id="accessDenied">
+        ACCESS DENIED
+    </div>
+    
+    <!-- Simple Digital Logo -->
+    <div class="digital-logo-container" id="digitalLogoContainer">
+        <div class="digital-logo-wrapper">
+            <img src="logo bafar digital.gif" alt="Grupo BAFAR Digital" class="digital-logo-gif" id="digitalLogoGif">
+        </div>
+        <div class="loading-message">Inicializando Intelligence Hub...</div>
+    </div>
+
+
+    <script>
+        // User Database (identical to original repository)
+        let users = localStorage.getItem('bafarUsers');
+        if (!users) {
+            users = {
+                'admin': {
+                    password: 'bafar2024',
+                    role: 'editor',
+                    name: 'Administrador'
+                },
+                'daniel': {
+                    password: 'bafar2024',
+                    role: 'editor',
+                    name: 'Daniel Lopez'
+                },
+                'jose': {
+                    password: 'bafar2024',
+                    role: 'editor',
+                    name: 'Jose Daniel'
+                },
+                'melissa': {
+                    password: 'bafar2024',
+                    role: 'editor',
+                    name: 'Melissa Nevarez'
+                },
+                'gabriela': {
+                    password: 'bafar2024',
+                    role: 'editor',
+                    name: 'Gabriela Mariñelarena'
+                },
+                'lector': {
+                    password: 'bafar2024',
+                    role: 'reader',
+                    name: 'Usuario Lector'
+                },
+                'viewer': {
+                    password: 'view2024',
+                    role: 'reader',
+                    name: 'Visualizador'
+                },
+                'consulta': {
+                    password: 'consulta2024',
+                    role: 'reader',
+                    name: 'Consulta'
+                },
+                'sergio': {
+                    password: 'bafar2024',
+                    role: 'editor',
+                    name: 'Sergio López'
+                },
+                'david': {
+                    password: 'bafar2024',
+                    role: 'editor',
+                    name: 'David Valdez'
+                },
+                'viewer': {
+                    password: 'view2024',
+                    role: 'viewer',
+                    name: 'Usuario Consulta'
+                },
+                'juan': {
+                    password: 'bafar123',
+                    role: 'viewer',
+                    name: 'Juan Pérez'
+                },
+                'ana': {
+                    password: 'bafar456',
+                    role: 'viewer',
+                    name: 'Ana García'
+                },
+            };
+            localStorage.setItem('bafarUsers', JSON.stringify(users));
+        } else {
+            users = JSON.parse(users);
+        }
+
+        // Matrix Rain Effect
+        function createMatrixRain() {
+            const matrixBg = document.getElementById('matrix-bg');
+            const columns = Math.floor(window.innerWidth / 25);
+            
+            for (let i = 0; i < columns; i++) {
+                const column = document.createElement('div');
+                column.className = 'matrix-column';
+                column.style.left = i * 25 + 'px';
+                
+                // Vary animation speeds for depth effect
+                const baseSpeed = Math.random() * 15 + 10;
+                column.style.animationDuration = baseSpeed + 's';
+                column.style.animationDelay = Math.random() * 5 + 's';
+                
+                // Add gradient opacity for depth
+                const depth = Math.random();
+                if (depth < 0.3) {
+                    column.style.opacity = '0.2';
+                    column.style.filter = 'blur(2px)';
+                } else if (depth < 0.6) {
+                    column.style.opacity = '0.4';
+                    column.style.filter = 'blur(1px)';
+                } else {
+                    column.style.opacity = '0.6';
+                }
+                
+                // Generate random characters with varying sizes
+                let text = '';
+                const chars = '0123456789010101';
+                for (let j = 0; j < 100; j++) {
+                    const char = chars[Math.floor(Math.random() * chars.length)];
+                    const size = Math.random() > 0.9 ? 'style="font-size: 24px; color: #00ffff;"' : '';
+                    text += `<span ${size}>${char}</span><br>`;
+                }
+                column.innerHTML = text;
+                
+                matrixBg.appendChild(column);
+            }
+        }
+
+        // Authentication Function
+        function authenticate(event) {
+            event.preventDefault();
+            
+            const username = document.getElementById('username').value.toLowerCase();
+            const password = document.getElementById('password').value;
+            const loadingSpinner = document.getElementById('loadingSpinner');
+            const loginForm = document.getElementById('loginForm');
+            
+            // Show loading
+            loadingSpinner.style.display = 'block';
+            loginForm.style.opacity = '0.5';
+            
+            // Simulate authentication delay
+            setTimeout(() => {
+                const user = users[username];
+                
+                if (user && user.password === password) {
+                    // Access Granted
+                    showAccessGranted(user);
+                } else {
+                    // Access Denied
+                    showAccessDenied();
+                }
+                
+                loadingSpinner.style.display = 'none';
+                loginForm.style.opacity = '1';
+            }, 2000);
+        }
+
+        // Show Access Granted
+        function showAccessGranted(user) {
+            const accessGranted = document.getElementById('accessGranted');
+            const loginContainer = document.getElementById('loginContainer');
+            const digitalLogoContainer = document.getElementById('digitalLogoContainer');
+            const matrixBg = document.getElementById('matrix-bg');
+            
+            // Hide login container with fade out
+            loginContainer.style.transition = 'opacity 0.5s ease-out';
+            loginContainer.style.opacity = '0';
+            
+            setTimeout(() => {
+                loginContainer.style.display = 'none';
+                
+                // Show only the digital GIF
+                digitalLogoContainer.style.display = 'block';
+                
+                // Store user session
+                sessionStorage.setItem('user', JSON.stringify({
+                    username: user.name,
+                    role: user.role
+                }));
+                
+                // Store for our dashboard
+                localStorage.setItem('bafar_auth_token', btoa(`${user.name}:${Date.now()}`));
+                localStorage.setItem('bafar_username', user.name);
+                localStorage.setItem('bafar_role', user.role);
+                
+                // Redirect after GIF plays
+                setTimeout(() => {
+                    // Redirect to our Intelligence Hub dashboard
+                    window.location.href = 'intelligence-hub-with-logo.html';
+                }, 4000);
+            }, 500);
+        }
+        
+        
+
+        // Show Access Denied
+        function showAccessDenied() {
+            const accessDenied = document.getElementById('accessDenied');
+            accessDenied.style.display = 'block';
+            
+            // Clear form
+            document.getElementById('password').value = '';
+            document.getElementById('username').focus();
+            
+            setTimeout(() => {
+                accessDenied.style.display = 'none';
+            }, 2000);
+        }
+
+        // Disable right-click
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+        });
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', function() {
+            createMatrixRain();
+            
+            // Focus username field after animation
+            setTimeout(() => {
+                document.getElementById('username').focus();
+            }, 2500);
+            
+            // Recreate matrix on resize
+            window.addEventListener('resize', () => {
+                setTimeout(createMatrixRain, 100);
+            });
+        });
+    </script>
+</body>
+</html>

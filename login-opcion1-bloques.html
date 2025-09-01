@@ -1,0 +1,389 @@
+ <!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OPCIÓN 1: Digital por Bloques - BAFAR Intelligence Hub</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: #000;
+            color: #0088ff;
+            min-height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Matrix Rain Effect */
+        #matrix-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            opacity: 0.15;
+        }
+
+        .matrix-column {
+            position: absolute;
+            top: -100%;
+            font-size: 20px;
+            line-height: 20px;
+            animation: matrix-fall linear infinite;
+            color: #0088ff;
+            text-shadow: 0 0 5px #0088ff;
+            font-weight: bold;
+        }
+
+        .matrix-column:nth-child(odd) {
+            color: #00aaff;
+            animation-duration: 15s;
+        }
+        
+        .matrix-column:nth-child(even) {
+            animation-duration: 20s;
+        }
+
+        @keyframes matrix-fall {
+            to { top: 100%; }
+        }
+
+        /* Login Container */
+        .login-container {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 100;
+            animation: fadeIn 2s ease-in;
+            width: min(90vw, 450px);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translate(-50%, -40%); }
+            to { opacity: 1; transform: translate(-50%, -50%); }
+        }
+
+        .top-secret {
+            background: linear-gradient(45deg, #ff0000, #aa0000);
+            color: white;
+            padding: 10px 30px;
+            font-size: 24px;
+            font-weight: bold;
+            letter-spacing: 5px;
+            margin-bottom: 30px;
+            animation: pulse 2s infinite;
+            clip-path: polygon(0 0, 100% 0, 95% 100%, 5% 100%);
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(255, 0, 0, 0.5); }
+            50% { box-shadow: 0 0 40px rgba(255, 0, 0, 0.8); }
+        }
+
+        .logo-container {
+            margin: 30px 0 40px 0;
+            padding: 20px;
+        }
+
+        .bafar-logo {
+            max-height: 90px;
+            max-width: 260px;
+            filter: brightness(1.8) contrast(1.2) drop-shadow(0 0 30px rgba(0, 136, 255, 0.9));
+        }
+
+        .system-title {
+            font-size: 48px;
+            font-weight: bold;
+            color: #0088ff;
+            text-shadow: 0 0 20px #0088ff;
+            margin: 30px 0;
+            letter-spacing: 3px;
+            animation: glitch 2s infinite;
+        }
+
+        @keyframes glitch {
+            0%, 100% { text-shadow: 0 0 20px #0088ff; }
+            25% { text-shadow: -2px 0 #ff0000, 2px 0 #00ffff; }
+            50% { text-shadow: 2px 0 #ff00ff, -2px 0 #ffff00; }
+            75% { text-shadow: 0 0 20px #0088ff; }
+        }
+
+        .login-form {
+            background: rgba(0, 10, 30, 0.95);
+            border: 2px solid #0088ff;
+            padding: 35px;
+            border-radius: 10px;
+            box-shadow: 0 0 50px rgba(0, 136, 255, 0.3);
+            position: relative;
+        }
+
+        .input-group {
+            margin: 30px 0;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 14px;
+            color: #0088ff;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 15px;
+            background: #001122;
+            border: 1px solid #0088ff;
+            color: #0088ff;
+            font-size: 16px;
+            font-family: 'Courier New', monospace;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .access-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(45deg, #0088ff, #0066cc);
+            border: none;
+            color: #fff;
+            font-size: 18px;
+            font-weight: bold;
+            letter-spacing: 3px;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+
+        .warning {
+            margin-top: 30px;
+            font-size: 12px;
+            color: #ffaa00;
+            text-align: center;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* OPCIÓN 1: Digital por Bloques */
+        .digital-logo-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            z-index: 2000;
+            background: #000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .digital-reveal-logo {
+            width: 350px;
+            height: auto;
+            opacity: 0;
+            animation: digitalBlockReveal 3s ease-out forwards;
+            filter: brightness(1.5) contrast(1.2) drop-shadow(0 0 30px #0088ff);
+        }
+
+        @keyframes digitalBlockReveal {
+            0% {
+                opacity: 0;
+                clip-path: polygon(0 0, 0 0, 0 100%, 0% 100%);
+                filter: blur(20px) brightness(0.5) saturate(0);
+                transform: scale(0.8);
+            }
+            10% {
+                opacity: 0.3;
+                clip-path: polygon(0 0, 10% 0, 10% 100%, 0% 100%);
+                filter: blur(15px) brightness(0.7) saturate(50%);
+                transform: scale(0.85);
+            }
+            20% {
+                opacity: 0.5;
+                clip-path: polygon(0 0, 25% 0, 25% 100%, 0% 100%);
+                filter: blur(12px) brightness(1) saturate(80%);
+                transform: scale(0.9);
+            }
+            30% {
+                opacity: 0.7;
+                clip-path: polygon(0 0, 40% 0, 40% 100%, 0% 100%);
+                filter: blur(8px) brightness(1.2) saturate(100%);
+                transform: scale(0.95);
+            }
+            40% {
+                opacity: 0.8;
+                clip-path: polygon(0 0, 55% 0, 55% 100%, 0% 100%);
+                filter: blur(6px) brightness(1.3) saturate(120%);
+                transform: scale(0.98);
+            }
+            50% {
+                opacity: 0.9;
+                clip-path: polygon(0 0, 70% 0, 70% 100%, 0% 100%);
+                filter: blur(4px) brightness(1.4) saturate(140%);
+                transform: scale(1);
+            }
+            60% {
+                opacity: 0.95;
+                clip-path: polygon(0 0, 85% 0, 85% 100%, 0% 100%);
+                filter: blur(2px) brightness(1.5) saturate(160%);
+                transform: scale(1.02);
+            }
+            70% {
+                opacity: 1;
+                clip-path: polygon(0 0, 95% 0, 95% 100%, 0% 100%);
+                filter: blur(1px) brightness(1.6) saturate(180%);
+                transform: scale(1.05);
+            }
+            80% {
+                opacity: 1;
+                clip-path: polygon(0 0, 100% 0, 100% 100%, 0% 100%);
+                filter: blur(0.5px) brightness(1.7) saturate(200%);
+                transform: scale(1.03);
+            }
+            90% {
+                opacity: 1;
+                clip-path: polygon(0 0, 100% 0, 100% 100%, 0% 100%);
+                filter: blur(0px) brightness(1.6) saturate(180%) drop-shadow(0 0 20px #0088ff);
+                transform: scale(1.01);
+            }
+            100% {
+                opacity: 1;
+                clip-path: polygon(0 0, 100% 0, 100% 100%, 0% 100%);
+                filter: blur(0px) brightness(1.5) saturate(150%) 
+                        drop-shadow(0 0 30px #0088ff) 
+                        drop-shadow(0 0 15px #00aaff)
+                        drop-shadow(0 0 8px #ffffff);
+                transform: scale(1);
+            }
+        }
+
+        /* Overlay digital grid effect */
+        .digital-reveal-logo::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(90deg, transparent 48%, rgba(0, 136, 255, 0.1) 49%, rgba(0, 136, 255, 0.1) 51%, transparent 52%),
+                linear-gradient(0deg, transparent 48%, rgba(0, 136, 255, 0.1) 49%, rgba(0, 136, 255, 0.1) 51%, transparent 52%);
+            background-size: 8px 8px;
+            opacity: 0;
+            animation: digitalGrid 3s ease-out;
+            pointer-events: none;
+        }
+
+        @keyframes digitalGrid {
+            0% { opacity: 0; }
+            30% { opacity: 0.8; }
+            60% { opacity: 0.4; }
+            100% { opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Matrix Rain Background -->
+    <div id="matrix-bg"></div>
+
+    <!-- Login Container -->
+    <div class="login-container" id="loginContainer">
+        <div class="top-secret">TOP SECRET</div>
+        
+        <div class="logo-container">
+            <img src="bafar-logo.png" alt="GRUPO BAFAR" class="bafar-logo" onerror="this.style.display='none';">
+        </div>
+        
+        <h1 class="system-title">INTELLIGENCE HUB</h1>
+        <p style="color: #00ff00; font-size: 18px; margin-bottom: 20px;">OPCIÓN 1: EFECTO DIGITAL POR BLOQUES</p>
+        
+        <form class="login-form" id="loginForm">
+            <div class="input-group">
+                <label for="username">USUARIO / EMAIL</label>
+                <input type="text" id="username" name="username" placeholder="Ingrese su usuario" required>
+            </div>
+            
+            <div class="input-group">
+                <label for="password">CONTRASEÑA</label>
+                <input type="password" id="password" name="password" placeholder="Ingrese su contraseña" required>
+            </div>
+            
+            <button type="submit" class="access-btn">PROBAR EFECTO - OPCIÓN 1</button>
+        </form>
+        
+        <p class="warning">⚠️ PROBANDO EFECTO DIGITAL POR BLOQUES ⚠️</p>
+    </div>
+
+    <!-- Digital Logo Container -->
+    <div class="digital-logo-container" id="digitalLogo">
+        <img src="bafar-logo.png" alt="BAFAR" class="digital-reveal-logo" onerror="this.style.display='none';">
+    </div>
+
+    <script>
+        // Matrix Rain Effect
+        function createMatrixRain() {
+            const matrixBg = document.getElementById('matrix-bg');
+            const columns = Math.floor(window.innerWidth / 20);
+            
+            for (let i = 0; i < columns; i++) {
+                const column = document.createElement('div');
+                column.className = 'matrix-column';
+                column.style.left = i * 20 + 'px';
+                column.style.animationDelay = Math.random() * 5 + 's';
+                
+                let chars = '';
+                const charSet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()_+{}[]|;:<>?/';
+                for (let j = 0; j < 100; j++) {
+                    chars += charSet[Math.floor(Math.random() * charSet.length)] + '<br>';
+                }
+                column.innerHTML = chars;
+                matrixBg.appendChild(column);
+            }
+        }
+
+        createMatrixRain();
+
+        // Login Form Handler
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const inputs = this.querySelectorAll('input, button');
+            inputs.forEach(input => input.disabled = true);
+            
+            // Simulate delay
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            
+            // Hide login and show digital effect
+            document.getElementById('loginContainer').style.transition = 'opacity 0.8s ease-out';
+            document.getElementById('loginContainer').style.opacity = '0';
+            
+            setTimeout(() => {
+                document.getElementById('digitalLogo').style.display = 'flex';
+            }, 800);
+            
+            // Reset after demo
+            setTimeout(() => {
+                document.getElementById('digitalLogo').style.display = 'none';
+                document.getElementById('loginContainer').style.opacity = '1';
+                inputs.forEach(input => input.disabled = false);
+            }, 4000);
+        });
+
+        document.getElementById('username').focus();
+    </script>
+</body>
+</html>

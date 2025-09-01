@@ -1,0 +1,1170 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intelligence Hub - Bafar</title>
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.5/xlsx.full.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Google Sans', 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #f8f9fa;
+            color: #202124;
+            font-size: 14px;
+            line-height: 20px;
+        }
+
+        /* Header estilo Google */
+        .header {
+            height: 64px;
+            background: #ffffff;
+            border-bottom: 1px solid #dadce0;
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 1px 2px 0 rgba(60,64,67,.3), 0 1px 3px 1px rgba(60,64,67,.15);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .menu-btn {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background 0.2s;
+            border: none;
+            background: transparent;
+        }
+
+        .menu-btn:hover {
+            background: #f1f3f4;
+        }
+
+        .menu-icon {
+            width: 24px;
+            height: 24px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 22px;
+            color: #5f6368;
+            font-weight: 400;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: white;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .logo-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            padding: 4px;
+        }
+
+        /* Search bar estilo Google */
+        .search-container {
+            flex: 1;
+            max-width: 720px;
+            margin: 0 auto;
+        }
+
+        .search-box {
+            background: #f1f3f4;
+            border-radius: 8px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            transition: box-shadow 0.2s, background 0.2s;
+        }
+
+        .search-box:focus-within {
+            background: #ffffff;
+            box-shadow: 0 1px 1px 0 rgba(65,69,73,.3), 0 1px 3px 1px rgba(65,69,73,.15);
+        }
+
+        .search-icon {
+            color: #5f6368;
+            margin-right: 12px;
+        }
+
+        .search-input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            outline: none;
+            font-size: 16px;
+            color: #202124;
+        }
+
+        /* Sidebar estilo Google */
+        .sidebar {
+            width: 256px;
+            background: #ffffff;
+            border-right: 1px solid #dadce0;
+            height: calc(100vh - 64px);
+            position: fixed;
+            left: 0;
+            top: 64px;
+            padding: 8px 0;
+            overflow-y: auto;
+            transition: transform 0.3s;
+        }
+
+        .sidebar.collapsed {
+            transform: translateX(-256px);
+        }
+
+        .nav-section {
+            padding: 8px 0;
+            border-bottom: 1px solid #f1f3f4;
+        }
+
+        .nav-section-title {
+            padding: 8px 24px;
+            font-size: 11px;
+            font-weight: 500;
+            color: #5f6368;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+
+        .nav-item {
+            height: 40px;
+            display: flex;
+            align-items: center;
+            padding: 0 24px;
+            color: #5f6368;
+            text-decoration: none;
+            transition: background 0.2s;
+            cursor: pointer;
+            border-radius: 0 20px 20px 0;
+            margin-right: 12px;
+            font-size: 14px;
+            font-weight: 500;
+            gap: 16px;
+        }
+
+        .nav-item:hover {
+            background: #f1f3f4;
+        }
+
+        .nav-item.active {
+            background: #e8f0fe;
+            color: #1967d2;
+            font-weight: 500;
+        }
+
+        .nav-icon {
+            width: 20px;
+            height: 20px;
+            opacity: 0.7;
+        }
+
+        /* Main content area */
+        .main-content {
+            margin-left: 256px;
+            padding: 24px;
+            transition: margin-left 0.3s;
+            max-width: 1400px;
+        }
+
+        .main-content.expanded {
+            margin-left: 0;
+        }
+
+        /* Page Title */
+        .page-title {
+            font-size: 24px;
+            font-weight: 400;
+            color: #202124;
+            margin-bottom: 24px;
+        }
+
+        /* Cards estilo Google */
+        .card {
+            background: #ffffff;
+            border: 1px solid #dadce0;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            transition: box-shadow 0.2s;
+        }
+
+        .card:hover {
+            box-shadow: 0 1px 2px 0 rgba(60,64,67,.3), 0 1px 3px 1px rgba(60,64,67,.15);
+        }
+
+        .card-header {
+            padding: 16px 24px;
+            border-bottom: 1px solid #dadce0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 500;
+            color: #202124;
+        }
+
+        .card-content {
+            padding: 24px;
+        }
+
+        /* Dashboard grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: #ffffff;
+            border: 1px solid #dadce0;
+            border-radius: 8px;
+            padding: 20px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .stat-card:hover {
+            box-shadow: 0 1px 2px 0 rgba(60,64,67,.3), 0 2px 6px 2px rgba(60,64,67,.15);
+            transform: translateY(-2px);
+        }
+
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #1a73e8, #4285f4);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            margin-bottom: 12px;
+            font-size: 20px;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 400;
+            color: #202124;
+            line-height: 40px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #5f6368;
+            margin-top: 4px;
+        }
+
+        .stat-change {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            margin-top: 8px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .stat-change.positive {
+            background: #e6f4ea;
+            color: #137333;
+        }
+
+        .stat-change.negative {
+            background: #fce8e6;
+            color: #c5221f;
+        }
+
+        /* Buttons estilo Google */
+        .btn {
+            height: 36px;
+            padding: 0 24px;
+            border-radius: 4px;
+            border: none;
+            font-family: 'Google Sans', Roboto, sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: box-shadow 0.2s, background 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: #1a73e8;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1765cc;
+            box-shadow: 0 1px 2px 0 rgba(26,115,232,.45), 0 1px 3px 1px rgba(26,115,232,.3);
+        }
+
+        .btn-secondary {
+            background: #ffffff;
+            color: #1a73e8;
+            border: 1px solid #dadce0;
+        }
+
+        .btn-secondary:hover {
+            background: #f8f9fa;
+            border-color: #d2d3d3;
+        }
+
+        /* FAB Button */
+        .fab {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: #1a73e8;
+            color: white;
+            border: none;
+            box-shadow: 0 1px 3px 0 rgba(60,64,67,.3), 0 4px 8px 3px rgba(60,64,67,.15);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .fab:hover {
+            box-shadow: 0 1px 3px 0 rgba(60,64,67,.3), 0 8px 12px 3px rgba(60,64,67,.15);
+            transform: scale(1.05);
+        }
+
+        /* Tables estilo Google */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th {
+            text-align: left;
+            padding: 12px 16px;
+            font-size: 12px;
+            font-weight: 500;
+            color: #5f6368;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid #dadce0;
+            background: #f8f9fa;
+        }
+
+        .data-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid #f1f3f4;
+            color: #202124;
+        }
+
+        .data-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        /* Chips/Tags */
+        .chip {
+            display: inline-flex;
+            align-items: center;
+            height: 32px;
+            padding: 0 12px;
+            border-radius: 16px;
+            background: #f1f3f4;
+            color: #5f6368;
+            font-size: 14px;
+            margin: 4px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .chip:hover {
+            background: #e8eaed;
+        }
+
+        .chip.selected {
+            background: #e8f0fe;
+            color: #1967d2;
+        }
+
+        .chip.success {
+            background: #e6f4ea;
+            color: #137333;
+        }
+
+        .chip.warning {
+            background: #fef7e0;
+            color: #ea8600;
+        }
+
+        /* Date filters */
+        .filter-bar {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px 0;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .date-input {
+            height: 36px;
+            padding: 0 12px;
+            border: 1px solid #dadce0;
+            border-radius: 4px;
+            font-size: 14px;
+            color: #202124;
+            background: #ffffff;
+            transition: border-color 0.2s;
+        }
+
+        .date-input:focus {
+            outline: none;
+            border-color: #1a73e8;
+        }
+
+        /* Charts container */
+        .chart-container {
+            height: 300px;
+            padding: 16px;
+            position: relative;
+        }
+
+        /* Loading spinner */
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f1f3f4;
+            border-radius: 50%;
+            border-top-color: #1a73e8;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Unit tabs */
+        .unit-tabs {
+            display: flex;
+            gap: 8px;
+            padding: 8px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 24px;
+            overflow-x: auto;
+            flex-wrap: wrap;
+        }
+
+        .unit-tab {
+            padding: 8px 16px;
+            border-radius: 16px;
+            background: white;
+            border: 1px solid #dadce0;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+            white-space: nowrap;
+        }
+
+        .unit-tab:hover {
+            background: #f1f3f4;
+        }
+
+        .unit-tab.active {
+            background: #1a73e8;
+            color: white;
+            border-color: #1a73e8;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-256px);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+
+            .search-container {
+                display: none;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Toast notifications */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #323232;
+            color: white;
+            padding: 16px 24px;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px 0 rgba(60,64,67,.3), 0 4px 8px 3px rgba(60,64,67,.15);
+            display: none;
+            z-index: 9999;
+        }
+
+        .toast.show {
+            display: block;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(100%);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-left">
+            <button class="menu-btn" id="menuBtn">
+                <svg class="menu-icon" viewBox="0 0 24 24">
+                    <path fill="currentColor" d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+                </svg>
+            </button>
+            <div class="logo">
+                <div class="logo-icon">
+                    <img src="bafar-logo.png" alt="Grupo Bafar" onerror="this.onerror=null; this.src='Grupo-Bafar_logo_white.png.webp';">
+                </div>
+                <span>Intelligence Hub</span>
+            </div>
+        </div>
+        
+        <div class="search-container">
+            <div class="search-box">
+                <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24">
+                    <path fill="currentColor" d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                </svg>
+                <input type="text" class="search-input" placeholder="Buscar unidad de negocio..." id="searchInput">
+            </div>
+        </div>
+
+        <div style="display: flex; gap: 16px; align-items: center;">
+            <button class="btn btn-primary" onclick="exportToExcel()">
+                <svg width="16" height="16" viewBox="0 0 24 24">
+                    <path fill="currentColor" d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+                </svg>
+                Exportar
+            </button>
+        </div>
+    </header>
+
+    <!-- Sidebar -->
+    <nav class="sidebar" id="sidebar">
+        <div class="nav-section">
+            <div class="nav-section-title">Principal</div>
+            <a class="nav-item active" onclick="showSection('dashboard')">
+                <svg class="nav-icon" viewBox="0 0 24 24">
+                    <path fill="currentColor" d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/>
+                </svg>
+                Dashboard
+            </a>
+            <a class="nav-item" onclick="showSection('units')">
+                <svg class="nav-icon" viewBox="0 0 24 24">
+                    <path fill="currentColor" d="M12 2l-5.5 9h11z M12 22l5.5-9h-11z M3.5 13l4-7v14z M20.5 13l-4 7v-14z"/>
+                </svg>
+                Unidades
+            </a>
+        </div>
+        
+        <div class="nav-section">
+            <div class="nav-section-title">Unidades de Negocio</div>
+            <div id="unitsList"></div>
+        </div>
+
+        <div class="nav-section">
+            <div class="nav-section-title">Herramientas</div>
+            <a class="nav-item" onclick="showSection('reports')">
+                <svg class="nav-icon" viewBox="0 0 24 24">
+                    <path fill="currentColor" d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+                </svg>
+                Reportes
+            </a>
+            <a class="nav-item" onclick="showSection('analytics')">
+                <svg class="nav-icon" viewBox="0 0 24 24">
+                    <path fill="currentColor" d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
+                </svg>
+                Análisis
+            </a>
+            <a class="nav-item" onclick="showSection('settings')">
+                <svg class="nav-icon" viewBox="0 0 24 24">
+                    <path fill="currentColor" d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+                </svg>
+                Configuración
+            </a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content" id="mainContent">
+        <!-- Dashboard Section -->
+        <div id="dashboard-section">
+            <h1 class="page-title">Dashboard General</h1>
+            
+            <!-- Filter Bar -->
+            <div class="filter-bar">
+                <input type="date" class="date-input" id="startDate">
+                <span style="color: #5f6368;">hasta</span>
+                <input type="date" class="date-input" id="endDate">
+                <button class="btn btn-primary" onclick="applyFilters()">
+                    <svg width="16" height="16" viewBox="0 0 24 24">
+                        <path fill="currentColor" d="M3 17v2h6v-2H3zM3 5v2h10V5H3zm10 16v-2h8v-2h-8v-2h-2v6h2zM7 9v2H3v2h4v2h2V9H7zm14 4v-2H11v2h10zm-6-4h2V7h4V5h-4V3h-2v6z"/>
+                    </svg>
+                    Filtrar
+                </button>
+            </div>
+
+            <!-- Dashboard Grid -->
+            <div class="dashboard-grid" id="statsGrid">
+                <!-- Stats cards se llenarán dinámicamente -->
+            </div>
+
+            <!-- Charts Row -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px;">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Tendencia de Ventas</h2>
+                        <div style="display: flex; gap: 8px;">
+                            <span class="chip selected">Mes</span>
+                            <span class="chip">Trimestre</span>
+                            <span class="chip">Año</span>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <div class="chart-container">
+                            <canvas id="salesChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Distribución por Unidad</h2>
+                    </div>
+                    <div class="card-content">
+                        <div class="chart-container">
+                            <canvas id="distributionChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Units Table -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Resumen de Unidades</h2>
+                    <button class="btn btn-primary" onclick="showAddUnitModal()">
+                        <svg width="16" height="16" viewBox="0 0 24 24">
+                            <path fill="currentColor" d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                        </svg>
+                        Agregar Unidad
+                    </button>
+                </div>
+                <div class="card-content">
+                    <table class="data-table" id="unitsTable">
+                        <thead>
+                            <tr>
+                                <th>Unidad</th>
+                                <th>Responsable</th>
+                                <th>Frecuencia</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="unitsTableBody">
+                            <!-- Se llenará dinámicamente -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Units Section (hidden by default) -->
+        <div id="units-section" style="display: none;">
+            <h1 class="page-title">Unidades de Negocio</h1>
+            
+            <!-- Unit Tabs -->
+            <div class="unit-tabs" id="unitTabs">
+                <!-- Se llenará dinámicamente -->
+            </div>
+
+            <div id="unitDetails">
+                <!-- Detalles de la unidad seleccionada -->
+            </div>
+        </div>
+    </main>
+
+    <!-- FAB Button -->
+    <button class="fab" onclick="showQuickAction()">
+        <svg width="24" height="24" viewBox="0 0 24 24">
+            <path fill="currentColor" d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+        </svg>
+    </button>
+
+    <!-- Toast notification -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // Data storage
+        let unitsData = [];
+        let currentUnit = null;
+        let currentSection = 'dashboard';
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', async function() {
+            await loadData();
+            initializeApp();
+            setupEventListeners();
+        });
+
+        // Load data from JSON
+        async function loadData() {
+            try {
+                const response = await fetch('data.json');
+                const data = await response.json();
+                unitsData = data.units || [];
+                renderUnits();
+                renderStats();
+                renderCharts();
+            } catch (error) {
+                console.error('Error loading data:', error);
+                // Fallback data
+                unitsData = [
+                    { id: 1, name: "DPC", responsible: "Gabriela Mariñelarena", frequency: "Semanal", status: "Activo" },
+                    { id: 2, name: "Retail", responsible: "David Valdez", frequency: "Semanal", status: "Activo" },
+                    { id: 3, name: "Cadena de suministro", responsible: "Sergio López", frequency: "Diaria", status: "Activo" },
+                    { id: 4, name: "Marketing", responsible: "Ana García", frequency: "Mensual", status: "Activo" },
+                    { id: 5, name: "CAAS", responsible: "Carlos Méndez", frequency: "Semanal", status: "Activo" },
+                    { id: 6, name: "Capital Humano", responsible: "Laura Rodríguez", frequency: "Quincenal", status: "Activo" },
+                    { id: 7, name: "Operaciones", responsible: "Roberto Sánchez", frequency: "Diaria", status: "Activo" },
+                    { id: 8, name: "Legal y cumplimiento", responsible: "Patricia Hernández", frequency: "Mensual", status: "Activo" },
+                    { id: 9, name: "Compras", responsible: "Miguel Torres", frequency: "Semanal", status: "Activo" },
+                    { id: 10, name: "Tecnología (IT)", responsible: "Fernando Díaz", frequency: "Diaria", status: "Activo" },
+                    { id: 11, name: "Finanzas", responsible: "Claudia Morales", frequency: "Diaria", status: "Activo" },
+                    { id: 12, name: "Calidad", responsible: "Jorge Ramírez", frequency: "Diaria", status: "Activo" },
+                    { id: 13, name: "Ventas", responsible: "Mónica Gutiérrez", frequency: "Diaria", status: "Activo" },
+                    { id: 14, name: "Comercio exterior", responsible: "Ricardo Flores", frequency: "Semanal", status: "Activo" },
+                    { id: 15, name: "Proyectos especiales", responsible: "Alejandra Castillo", frequency: "Variable", status: "Activo" },
+                    { id: 16, name: "I+D", responsible: "Eduardo Vargas", frequency: "Quincenal", status: "Activo" },
+                    { id: 17, name: "Sustentabilidad", responsible: "Isabel Jiménez", frequency: "Mensual", status: "Activo" },
+                    { id: 18, name: "Seguridad", responsible: "Raúl Mendoza", frequency: "Diaria", status: "Activo" },
+                    { id: 19, name: "Auditoría", responsible: "Carmen Silva", frequency: "Trimestral", status: "Activo" }
+                ];
+                renderUnits();
+                renderStats();
+                renderCharts();
+            }
+        }
+
+        // Initialize app
+        function initializeApp() {
+            // Set today's date as default
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('endDate').value = today;
+            
+            // Set start date to 30 days ago
+            const thirtyDaysAgo = new Date();
+            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+            document.getElementById('startDate').value = thirtyDaysAgo.toISOString().split('T')[0];
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Menu toggle
+            document.getElementById('menuBtn').addEventListener('click', () => {
+                document.getElementById('sidebar').classList.toggle('collapsed');
+                document.getElementById('mainContent').classList.toggle('expanded');
+            });
+
+            // Navigation items
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+
+            // Search
+            document.getElementById('searchInput').addEventListener('input', function(e) {
+                filterUnits(e.target.value);
+            });
+
+            // Chips selection
+            document.querySelectorAll('.chip').forEach(chip => {
+                chip.addEventListener('click', function() {
+                    const siblings = this.parentElement.querySelectorAll('.chip');
+                    siblings.forEach(s => s.classList.remove('selected'));
+                    this.classList.add('selected');
+                });
+            });
+        }
+
+        // Render units
+        function renderUnits() {
+            // Sidebar units list
+            const unitsList = document.getElementById('unitsList');
+            unitsList.innerHTML = '';
+            
+            unitsData.forEach(unit => {
+                const navItem = document.createElement('a');
+                navItem.className = 'nav-item';
+                navItem.innerHTML = `
+                    <svg class="nav-icon" viewBox="0 0 24 24">
+                        <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                    </svg>
+                    ${unit.name}
+                `;
+                navItem.onclick = () => showUnitDetails(unit);
+                unitsList.appendChild(navItem);
+            });
+
+            // Units table
+            const tableBody = document.getElementById('unitsTableBody');
+            tableBody.innerHTML = '';
+            
+            unitsData.forEach(unit => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><strong>${unit.name}</strong></td>
+                    <td>${unit.responsible || 'Sin asignar'}</td>
+                    <td>${unit.frequency || 'No definida'}</td>
+                    <td>
+                        <span class="chip ${unit.status === 'Activo' ? 'success' : 'warning'}">
+                            ${unit.status || 'Pendiente'}
+                        </span>
+                    </td>
+                    <td>
+                        <button class="btn btn-secondary" onclick="showUnitDetails(${JSON.stringify(unit).replace(/"/g, '&quot;')})">
+                            Ver detalles
+                        </button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+
+            // Unit tabs
+            const unitTabs = document.getElementById('unitTabs');
+            unitTabs.innerHTML = '';
+            
+            unitsData.forEach((unit, index) => {
+                const tab = document.createElement('div');
+                tab.className = 'unit-tab' + (index === 0 ? ' active' : '');
+                tab.textContent = unit.name;
+                tab.onclick = () => {
+                    document.querySelectorAll('.unit-tab').forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    showUnitDetails(unit);
+                };
+                unitTabs.appendChild(tab);
+            });
+        }
+
+        // Render stats
+        function renderStats() {
+            const statsGrid = document.getElementById('statsGrid');
+            statsGrid.innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-icon">📊</div>
+                    <div class="stat-value">${unitsData.length}</div>
+                    <div class="stat-label">Unidades Totales</div>
+                    <div class="stat-change positive">
+                        <svg width="16" height="16" viewBox="0 0 24 24">
+                            <path fill="currentColor" d="M7 14l5-5 5 5z"/>
+                        </svg>
+                        100% activas
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📈</div>
+                    <div class="stat-value">$2.5M</div>
+                    <div class="stat-label">Ventas del Mes</div>
+                    <div class="stat-change positive">
+                        <svg width="16" height="16" viewBox="0 0 24 24">
+                            <path fill="currentColor" d="M7 14l5-5 5 5z"/>
+                        </svg>
+                        +15.3%
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">✅</div>
+                    <div class="stat-value">94.2%</div>
+                    <div class="stat-label">Cumplimiento</div>
+                    <div class="stat-change positive">
+                        <svg width="16" height="16" viewBox="0 0 24 24">
+                            <path fill="currentColor" d="M7 14l5-5 5 5z"/>
+                        </svg>
+                        +2.8%
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">👥</div>
+                    <div class="stat-value">847</div>
+                    <div class="stat-label">Empleados</div>
+                    <div class="stat-change negative">
+                        <svg width="16" height="16" viewBox="0 0 24 24">
+                            <path fill="currentColor" d="M7 10l5 5 5-5z"/>
+                        </svg>
+                        -1.2%
+                    </div>
+                </div>
+            `;
+        }
+
+        // Render charts
+        function renderCharts() {
+            // Sales chart
+            const salesCtx = document.getElementById('salesChart').getContext('2d');
+            new Chart(salesCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'],
+                    datasets: [{
+                        label: 'Ventas 2025',
+                        data: [1.2, 1.5, 1.8, 2.1, 2.3, 2.5],
+                        borderColor: '#1a73e8',
+                        backgroundColor: 'rgba(26, 115, 232, 0.1)',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return '$' + value + 'M';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Distribution chart
+            const distCtx = document.getElementById('distributionChart').getContext('2d');
+            new Chart(distCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['DPC', 'Retail', 'Cadena de suministro', 'Marketing', 'Otros'],
+                    datasets: [{
+                        data: [25, 20, 15, 10, 30],
+                        backgroundColor: [
+                            '#1a73e8',
+                            '#34a853',
+                            '#fbbc04',
+                            '#ea4335',
+                            '#5f6368'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+
+        // Show section
+        function showSection(section) {
+            document.querySelectorAll('[id$="-section"]').forEach(s => s.style.display = 'none');
+            const sectionElement = document.getElementById(section + '-section');
+            if (sectionElement) {
+                sectionElement.style.display = 'block';
+            }
+            currentSection = section;
+        }
+
+        // Show unit details
+        function showUnitDetails(unit) {
+            currentUnit = unit;
+            showSection('units');
+            
+            const detailsDiv = document.getElementById('unitDetails');
+            detailsDiv.innerHTML = `
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">${unit.name}</h2>
+                        <button class="btn btn-primary">Editar</button>
+                    </div>
+                    <div class="card-content">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+                            <div>
+                                <p><strong>Responsable:</strong> ${unit.responsible || 'Sin asignar'}</p>
+                                <p><strong>Email:</strong> ${unit.email || 'No registrado'}</p>
+                                <p><strong>Frecuencia:</strong> ${unit.frequency || 'No definida'}</p>
+                                <p><strong>Estado:</strong> <span class="chip success">${unit.status || 'Activo'}</span></p>
+                            </div>
+                            <div>
+                                <p><strong>Ubicación:</strong> ${unit.location || 'No especificada'}</p>
+                                <p><strong>Presupuesto:</strong> ${unit.budget || 'No definido'}</p>
+                                <p><strong>Empleados:</strong> ${unit.employees || 'No especificado'}</p>
+                                <p><strong>Ingresos:</strong> ${unit.revenue || 'No disponible'}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Filter units
+        function filterUnits(searchTerm) {
+            const filtered = unitsData.filter(unit => 
+                unit.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                (unit.responsible && unit.responsible.toLowerCase().includes(searchTerm.toLowerCase()))
+            );
+            
+            // Update table
+            const tableBody = document.getElementById('unitsTableBody');
+            tableBody.innerHTML = '';
+            
+            filtered.forEach(unit => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><strong>${unit.name}</strong></td>
+                    <td>${unit.responsible || 'Sin asignar'}</td>
+                    <td>${unit.frequency || 'No definida'}</td>
+                    <td>
+                        <span class="chip ${unit.status === 'Activo' ? 'success' : 'warning'}">
+                            ${unit.status || 'Pendiente'}
+                        </span>
+                    </td>
+                    <td>
+                        <button class="btn btn-secondary" onclick="showUnitDetails(${JSON.stringify(unit).replace(/"/g, '&quot;')})">
+                            Ver detalles
+                        </button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Export to Excel
+        function exportToExcel() {
+            showToast('Exportando a Excel...');
+            
+            // Prepare data
+            const ws_data = [
+                ['Unidad', 'Responsable', 'Frecuencia', 'Estado', 'Email', 'Ubicación']
+            ];
+            
+            unitsData.forEach(unit => {
+                ws_data.push([
+                    unit.name,
+                    unit.responsible || '',
+                    unit.frequency || '',
+                    unit.status || '',
+                    unit.email || '',
+                    unit.location || ''
+                ]);
+            });
+            
+            // Create workbook
+            const ws = XLSX.utils.aoa_to_sheet(ws_data);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Unidades");
+            
+            // Save file
+            const fileName = `Intelligence_Hub_${new Date().toISOString().split('T')[0]}.xlsx`;
+            XLSX.writeFile(wb, fileName);
+            
+            showToast('Archivo exportado exitosamente');
+        }
+
+        // Show toast notification
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Apply filters
+        function applyFilters() {
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            
+            showToast(`Filtros aplicados: ${startDate} - ${endDate}`);
+            // Here you would filter your data based on dates
+        }
+
+        // Show quick action
+        function showQuickAction() {
+            showToast('Acción rápida - Proximamente');
+        }
+
+        // Show add unit modal
+        function showAddUnitModal() {
+            showToast('Formulario de nueva unidad - Proximamente');
+        }
+    </script>
+</body>
+</html>

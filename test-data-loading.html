@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Data Loading</title>
+</head>
+<body>
+    <h1>Test Data Loading</h1>
+    <button onclick="testLoad()">Test Load data.json</button>
+    <div id="result"></div>
+    
+    <script>
+        async function testLoad() {
+            const resultDiv = document.getElementById('result');
+            try {
+                const response = await fetch('./data.json');
+                const data = await response.json();
+                
+                let html = '<h2>Data Loaded Successfully!</h2>';
+                html += `<p>Units: ${data.units ? data.units.length : 0}</p>`;
+                html += `<p>Organizational data keys: ${data.organizational ? Object.keys(data.organizational).join(', ') : 'None'}</p>`;
+                
+                if (data.units) {
+                    html += '<h3>Units:</h3><ul>';
+                    data.units.forEach(unit => {
+                        const hasOrg = data.organizational && data.organizational[unit.id];
+                        const orgCount = hasOrg ? data.organizational[unit.id].length : 0;
+                        html += `<li>${unit.id}. ${unit.name} - ${unit.responsible} (Organigrama: ${orgCount} miembros)</li>`;
+                    });
+                    html += '</ul>';
+                }
+                
+                resultDiv.innerHTML = html;
+            } catch (error) {
+                resultDiv.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+            }
+        }
+    </script>
+</body>
+</html>

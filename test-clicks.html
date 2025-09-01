@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Clicks</title>
+</head>
+<body>
+    <h1>Test de Clicks</h1>
+    
+    <button onclick="alert('Click funciona!')">Test Click Simple</button>
+    <button onclick="testFunction()">Test Función</button>
+    <button onclick="showSection('units')">Test showSection</button>
+    
+    <div id="result"></div>
+    
+    <script>
+        function testFunction() {
+            document.getElementById('result').innerHTML = 'Función ejecutada!';
+        }
+        
+        function showSection(section) {
+            document.getElementById('result').innerHTML = 'showSection llamado con: ' + section;
+        }
+    </script>
+</body>
+</html>

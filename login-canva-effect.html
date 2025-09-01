@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EFECTO CANVA DIGITAL - BAFAR Intelligence Hub</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: #000;
+            color: #0088ff;
+            min-height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Matrix Rain Effect */
+        #matrix-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            opacity: 0.15;
+        }
+
+        .matrix-column {
+            position: absolute;
+            top: -100%;
+            font-size: 20px;
+            line-height: 20px;
+            animation: matrix-fall linear infinite;
+            color: #0088ff;
+            text-shadow: 0 0 5px #0088ff;
+            font-weight: bold;
+        }
+
+        .matrix-column:nth-child(odd) {
+            color: #00aaff;
+            animation-duration: 15s;
+        }
+        
+        .matrix-column:nth-child(even) {
+            animation-duration: 20s;
+        }
+
+        @keyframes matrix-fall {
+            to { top: 100%; }
+        }
+
+        /* Login Container */
+        .login-container {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 100;
+            animation: fadeIn 2s ease-in;
+            width: min(90vw, 450px);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translate(-50%, -40%); }
+            to { opacity: 1; transform: translate(-50%, -50%); }
+        }
+
+        .top-secret {
+            background: linear-gradient(45deg, #ff0000, #aa0000);
+            color: white;
+            padding: 10px 30px;
+            font-size: 24px;
+            font-weight: bold;
+            letter-spacing: 5px;
+            margin-bottom: 30px;
+            animation: pulse 2s infinite;
+            clip-path: polygon(0 0, 100% 0, 95% 100%, 5% 100%);
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(255, 0, 0, 0.5); }
+            50% { box-shadow: 0 0 40px rgba(255, 0, 0, 0.8); }
+        }
+
+        .logo-container {
+            margin: 30px 0 40px 0;
+            padding: 20px;
+        }
+
+        .bafar-logo {
+            max-height: 90px;
+            max-width: 260px;
+            filter: brightness(1.8) contrast(1.2) drop-shadow(0 0 30px rgba(0, 136, 255, 0.9));
+        }
+
+        .system-title {
+            font-size: 48px;
+            font-weight: bold;
+            color: #0088ff;
+            text-shadow: 0 0 20px #0088ff;
+            margin: 30px 0;
+            letter-spacing: 3px;
+            animation: glitch 2s infinite;
+        }
+
+        @keyframes glitch {
+            0%, 100% { text-shadow: 0 0 20px #0088ff; }
+            25% { text-shadow: -2px 0 #ff0000, 2px 0 #00ffff; }
+            50% { text-shadow: 2px 0 #ff00ff, -2px 0 #ffff00; }
+            75% { text-shadow: 0 0 20px #0088ff; }
+        }
+
+        .login-form {
+            background: rgba(0, 10, 30, 0.95);
+            border: 2px solid #0088ff;
+            padding: 35px;
+            border-radius: 10px;
+            box-shadow: 0 0 50px rgba(0, 136, 255, 0.3);
+            position: relative;
+        }
+
+        .input-group {
+            margin: 30px 0;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 14px;
+            color: #0088ff;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 15px;
+            background: #001122;
+            border: 1px solid #0088ff;
+            color: #0088ff;
+            font-size: 16px;
+            font-family: 'Courier New', monospace;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .access-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(45deg, #0088ff, #0066cc);
+            border: none;
+            color: #fff;
+            font-size: 18px;
+            font-weight: bold;
+            letter-spacing: 3px;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+
+        .warning {
+            margin-top: 30px;
+            font-size: 12px;
+            color: #ffaa00;
+            text-align: center;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* EFECTO CANVA DIGITAL - Revelado suave y elegante */
+        .digital-logo-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            z-index: 2000;
+            background: #000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .canva-digital-logo {
+            width: 350px;
+            height: auto;
+            opacity: 0;
+            animation: canvaDigitalReveal 2.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+            filter: brightness(1.5) contrast(1.2);
+        }
+
+        @keyframes canvaDigitalReveal {
+            0% {
+                opacity: 0;
+                transform: scale(0.6) translateY(20px);
+                filter: blur(25px) brightness(0.3) saturate(0) contrast(2);
+                clip-path: polygon(45% 45%, 55% 45%, 55% 55%, 45% 55%);
+            }
+            8% {
+                opacity: 0.1;
+                transform: scale(0.65) translateY(15px);
+                filter: blur(22px) brightness(0.4) saturate(10%) contrast(1.8);
+                clip-path: polygon(35% 35%, 65% 35%, 65% 65%, 35% 65%);
+            }
+            15% {
+                opacity: 0.2;
+                transform: scale(0.7) translateY(12px);
+                filter: blur(20px) brightness(0.5) saturate(20%) contrast(1.6);
+                clip-path: polygon(25% 25%, 75% 25%, 75% 75%, 25% 75%);
+            }
+            22% {
+                opacity: 0.35;
+                transform: scale(0.75) translateY(10px);
+                filter: blur(18px) brightness(0.6) saturate(30%) contrast(1.5);
+                clip-path: polygon(20% 20%, 80% 20%, 80% 80%, 20% 80%);
+            }
+            30% {
+                opacity: 0.5;
+                transform: scale(0.8) translateY(8px);
+                filter: blur(15px) brightness(0.7) saturate(50%) contrast(1.4);
+                clip-path: polygon(15% 15%, 85% 15%, 85% 85%, 15% 85%);
+            }
+            38% {
+                opacity: 0.65;
+                transform: scale(0.85) translateY(6px);
+                filter: blur(12px) brightness(0.8) saturate(70%) contrast(1.3);
+                clip-path: polygon(10% 10%, 90% 10%, 90% 90%, 10% 90%);
+            }
+            45% {
+                opacity: 0.78;
+                transform: scale(0.9) translateY(4px);
+                filter: blur(10px) brightness(0.9) saturate(90%) contrast(1.2);
+                clip-path: polygon(5% 5%, 95% 5%, 95% 95%, 5% 95%);
+            }
+            52% {
+                opacity: 0.88;
+                transform: scale(0.94) translateY(3px);
+                filter: blur(8px) brightness(1) saturate(110%) contrast(1.15);
+                clip-path: polygon(2% 2%, 98% 2%, 98% 98%, 2% 98%);
+            }
+            60% {
+                opacity: 0.95;
+                transform: scale(0.97) translateY(2px);
+                filter: blur(6px) brightness(1.1) saturate(130%) contrast(1.1);
+                clip-path: polygon(1% 1%, 99% 1%, 99% 99%, 1% 99%);
+            }
+            68% {
+                opacity: 0.98;
+                transform: scale(0.99) translateY(1px);
+                filter: blur(4px) brightness(1.2) saturate(150%) contrast(1.05);
+                clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+            }
+            75% {
+                opacity: 1;
+                transform: scale(1) translateY(0px);
+                filter: blur(3px) brightness(1.3) saturate(170%) contrast(1.02);
+                clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+            }
+            82% {
+                opacity: 1;
+                transform: scale(1.01) translateY(0px);
+                filter: blur(2px) brightness(1.4) saturate(180%) contrast(1.01);
+            }
+            88% {
+                opacity: 1;
+                transform: scale(1.005) translateY(0px);
+                filter: blur(1px) brightness(1.5) saturate(160%) contrast(1) hue-rotate(176deg);
+            }
+            92% {
+                opacity: 1;
+                transform: scale(1.002) translateY(0px);
+                filter: blur(0.5px) brightness(1.6) saturate(150%) hue-rotate(176deg)
+                        drop-shadow(0 0 15px #0088ff);
+            }
+            96% {
+                opacity: 1;
+                transform: scale(1.001) translateY(0px);
+                filter: blur(0px) brightness(1.5) saturate(140%) hue-rotate(176deg)
+                        drop-shadow(0 0 25px #0088ff) drop-shadow(0 0 12px #00aaff);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) translateY(0px);
+                filter: blur(0px) brightness(1.4) saturate(130%) hue-rotate(176deg)
+                        drop-shadow(0 0 30px #0088ff) 
+                        drop-shadow(0 0 15px #00aaff)
+                        drop-shadow(0 0 8px #ffffff);
+            }
+        }
+
+        /* Overlay sutil para el efecto digital */
+        .canva-digital-logo::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 30% 40%, rgba(0, 136, 255, 0.02) 0%, transparent 50%),
+                radial-gradient(circle at 70% 60%, rgba(0, 170, 255, 0.03) 0%, transparent 50%),
+                linear-gradient(45deg, transparent 49%, rgba(0, 136, 255, 0.01) 50%, transparent 51%);
+            opacity: 0;
+            animation: digitalShimmer 2.8s ease-out;
+            pointer-events: none;
+        }
+
+        @keyframes digitalShimmer {
+            0% { opacity: 0; }
+            30% { opacity: 1; }
+            70% { opacity: 0.5; }
+            100% { opacity: 0; }
+        }
+
+        /* Efecto de partículas sutiles */
+        .canva-digital-logo::after {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            background: 
+                radial-gradient(circle at 25% 25%, rgba(0, 136, 255, 0.1) 1px, transparent 1px),
+                radial-gradient(circle at 75% 25%, rgba(0, 170, 255, 0.08) 1px, transparent 1px),
+                radial-gradient(circle at 25% 75%, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+                radial-gradient(circle at 75% 75%, rgba(0, 136, 255, 0.06) 1px, transparent 1px);
+            background-size: 40px 40px, 35px 35px, 45px 45px, 38px 38px;
+            opacity: 0;
+            animation: softParticles 2.8s ease-out;
+            pointer-events: none;
+        }
+
+        @keyframes softParticles {
+            0% { 
+                opacity: 0; 
+                transform: scale(0.8) rotate(0deg); 
+            }
+            40% { 
+                opacity: 0.4; 
+                transform: scale(1.1) rotate(90deg); 
+            }
+            70% { 
+                opacity: 0.2; 
+                transform: scale(1.3) rotate(180deg); 
+            }
+            100% { 
+                opacity: 0; 
+                transform: scale(1.5) rotate(270deg); 
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Matrix Rain Background -->
+    <div id="matrix-bg"></div>
+
+    <!-- Login Container -->
+    <div class="login-container" id="loginContainer">
+        <div class="top-secret">TOP SECRET</div>
+        
+        <div class="logo-container">
+            <img src="bafar-logo.png" alt="GRUPO BAFAR" class="bafar-logo" onerror="this.style.display='none';">
+        </div>
+        
+        <h1 class="system-title">INTELLIGENCE HUB</h1>
+        <p style="color: #00ffaa; font-size: 18px; margin-bottom: 20px;">✨ EFECTO CANVA DIGITAL ✨</p>
+        
+        <form class="login-form" id="loginForm">
+            <div class="input-group">
+                <label for="username">USUARIO / EMAIL</label>
+                <input type="text" id="username" name="username" placeholder="Ingrese su usuario" required>
+            </div>
+            
+            <div class="input-group">
+                <label for="password">CONTRASEÑA</label>
+                <input type="password" id="password" name="password" placeholder="Ingrese su contraseña" required>
+            </div>
+            
+            <button type="submit" class="access-btn">PROBAR EFECTO CANVA</button>
+        </form>
+        
+        <p class="warning">⚠️ EFECTO DIGITAL SUAVE Y ELEGANTE ⚠️</p>
+    </div>
+
+    <!-- Digital Logo Container -->
+    <div class="digital-logo-container" id="digitalLogo">
+        <img src="bafar-logo.png" alt="BAFAR" class="canva-digital-logo" onerror="this.style.display='none';">
+    </div>
+
+    <script>
+        // Matrix Rain Effect
+        function createMatrixRain() {
+            const matrixBg = document.getElementById('matrix-bg');
+            const columns = Math.floor(window.innerWidth / 20);
+            
+            for (let i = 0; i < columns; i++) {
+                const column = document.createElement('div');
+                column.className = 'matrix-column';
+                column.style.left = i * 20 + 'px';
+                column.style.animationDelay = Math.random() * 5 + 's';
+                
+                let chars = '';
+                const charSet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()_+{}[]|;:<>?/';
+                for (let j = 0; j < 100; j++) {
+                    chars += charSet[Math.floor(Math.random() * charSet.length)] + '<br>';
+                }
+                column.innerHTML = chars;
+                matrixBg.appendChild(column);
+            }
+        }
+
+        createMatrixRain();
+
+        // Login Form Handler
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const inputs = this.querySelectorAll('input, button');
+            inputs.forEach(input => input.disabled = true);
+            
+            // Simulate delay
+            await new Promise(resolve => setTimeout(resolve, 800));
+            
+            // Hide login with smooth fade
+            document.getElementById('loginContainer').style.transition = 'opacity 1s ease-out';
+            document.getElementById('loginContainer').style.opacity = '0';
+            
+            // Start Canva digital effect
+            setTimeout(() => {
+                document.getElementById('digitalLogo').style.display = 'flex';
+            }, 1000);
+            
+            // Redirect after effect (or reset for demo)
+            setTimeout(() => {
+                // For demo - reset
+                document.getElementById('digitalLogo').style.display = 'none';
+                document.getElementById('loginContainer').style.opacity = '1';
+                inputs.forEach(input => input.disabled = false);
+                
+                // For production - uncomment this:
+                // window.location.href = 'intelligence-hub-with-logo.html';
+            }, 4000);
+        });
+
+        document.getElementById('username').focus();
+    </script>
+</body>
+</html>

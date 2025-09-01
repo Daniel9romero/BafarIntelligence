@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Intelligence Hub - Simple Fix</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .nav-item { 
+            display: inline-block; 
+            padding: 10px 20px; 
+            margin: 5px; 
+            background: #1a73e8; 
+            color: white; 
+            cursor: pointer; 
+            border-radius: 5px;
+        }
+        .content-section { display: none; margin: 20px 0; }
+        .active-section { display: block; }
+        .unit-card { 
+            border: 1px solid #ddd; 
+            padding: 15px; 
+            margin: 10px; 
+            display: inline-block; 
+            width: 200px;
+            vertical-align: top;
+        }
+    </style>
+</head>
+<body>
+    <h1>Intelligence Hub - Grupo Bafar</h1>
+    
+    <!-- Navigation -->
+    <div>
+        <div class="nav-item" onclick="showSection('dashboard')">Dashboard</div>
+        <div class="nav-item" onclick="showSection('units')">Unidades</div>
+        <div class="nav-item" onclick="showSection('reports')">Reportes</div>
+    </div>
+    
+    <!-- Dashboard Section -->
+    <div id="dashboard-section" class="content-section active-section">
+        <h2>Dashboard Principal</h2>
+        <p>Bienvenido al Intelligence Hub</p>
+    </div>
+    
+    <!-- Units Section -->
+    <div id="units-section" class="content-section">
+        <h2>Unidades de Negocio</h2>
+        <div id="unitsGrid">
+            <!-- Units will be loaded here -->
+        </div>
+    </div>
+    
+    <!-- Reports Section -->
+    <div id="reports-section" class="content-section">
+        <h2>Centro de Reportes</h2>
+        <p>Reportes y análisis del sistema</p>
+    </div>
+    
+    <script>
+        // Test if JavaScript is working
+        console.log('JavaScript is working!');
+        
+        function showSection(section) {
+            console.log('showSection called with:', section);
+            
+            // Hide all sections
+            const sections = document.querySelectorAll('.content-section');
+            sections.forEach(s => s.classList.remove('active-section'));
+            
+            // Show selected section
+            const targetSection = document.getElementById(section + '-section');
+            if (targetSection) {
+                targetSection.classList.add('active-section');
+            }
+            
+            // Load units if needed
+            if (section === 'units') {
+                loadUnits();
+            }
+        }
+        
+        function loadUnits() {
+            console.log('Loading units...');
+            const unitsGrid = document.getElementById('unitsGrid');
+            unitsGrid.innerHTML = '';
+            
+            const units = [
+                'DPC', 'Retail', 'Cadena de suministro', 'Marketing', 'CAAS', 
+                'Capital Humano', 'Operaciones', 'Legal y cumplimiento', 'Compras',
+                'Tecnología (IT)', 'Finanzas', 'Calidad', 'Ventas', 'Comercio exterior',
+                'Proyectos especiales', 'I+D', 'Sustentabilidad', 'Seguridad', 'Auditoría'
+            ];
+            
+            units.forEach((unitName, index) => {
+                const unitCard = document.createElement('div');
+                unitCard.className = 'unit-card';
+                unitCard.innerHTML = `
+                    <h3>${unitName}</h3>
+                    <p>Responsable: No asignado</p>
+                    <button onclick="alert('Ver detalles de ${unitName}')">Ver detalles</button>
+                `;
+                unitsGrid.appendChild(unitCard);
+            });
+            
+            console.log('Units loaded:', units.length);
+        }
+    </script>
+</body>
+</html>
